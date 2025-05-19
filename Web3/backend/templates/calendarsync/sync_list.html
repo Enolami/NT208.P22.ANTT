@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendar Syncs{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>My Calendar Syncs</h2>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'calendarsync:sync_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Calendar
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% for sync in syncs %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ sync.calendar_name }}</h5>
+                <span class="badge bg-info">Last synced: {{ sync.last_synced|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> Sync Token: {{ sync.sync_token|default:"Not set" }}
+                    </small>
+                </p>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group">
+                    <a href="{% url 'calendarsync:sync_now' sync.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-sync"></i> Sync Now
+                    </a>
+                    <a href="{% url 'calendarsync:sync_update' sync.pk %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'calendarsync:sync_delete' sync.pk %}" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <div class="alert alert-info">
+            No calendar syncs found. <a href="{% url 'calendarsync:sync_create' %}">Add your first calendar</a>!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 

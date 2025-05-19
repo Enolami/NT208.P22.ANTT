@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Assistant Interactions{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>My AI Assistant Interactions</h2>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'aiassistant:interaction_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New AI Request
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% for interaction in interactions %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Request #{{ interaction.id }}</h5>
+                <span class="badge bg-info">{{ interaction.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <strong>Request:</strong><br>
+                    {{ interaction.request_data|truncatechars:100 }}
+                </p>
+                <p class="card-text">
+                    <strong>Response:</strong><br>
+                    {{ interaction.ai_response|truncatechars:100 }}
+                </p>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group">
+                    <a href="{% url 'aiassistant:interaction_detail' interaction.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye"></i> View Details
+                    </a>
+                    <a href="{% url 'aiassistant:interaction_delete' interaction.pk %}" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <div class="alert alert-info">
+            No AI interactions found. <a href="{% url 'aiassistant:interaction_create' %}">Make your first request</a>!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 
