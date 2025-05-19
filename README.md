@@ -45,6 +45,7 @@ Nếu vẫn còn báo lỗi khi runserver thì chương trình báo lỗi thiế
 1. Lần đầu tiên sử dụng chương trình hãy tạo tài khoản và mật khẩu.
 2. Chương trình hiện tại vẫn chưa ổn định, có thể có lỗi, nếu mọi người fix được thì tạo branch riêng và fix lỗi tìm được
 3. AI và giọng nói vẫn chưa hoạt động, mình vẫn đang phát triển thêm, tuy nhiên task này sắp hoàn thành.
+3.5 Mình và Xuân Mai đang cùng tạo task AI Assisstant này, mọi người có thể làm chung cho vui :v
 4. Nếu mọi người thấy frontend không đẹp có thể chỉnh sửa, tạo branch riêng
 5. Các file frontend và backend còn dư khá nhiều, khi nào final thì mình sẽ lượt bỏ sau.
 6. Để có thể hiểu code nhanh chóng thì phần backend nên tập trung các file Models, Views (API_View), URLS (API_URLS) để hiểu chức năng
