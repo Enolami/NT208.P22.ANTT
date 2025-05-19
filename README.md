@@ -11,8 +11,9 @@
 ```
 ```diff
 ! Backend
-1. Chạy thử python manage.py runserver, nếu thành công thì chạy tiếp frontend.
-2. Nếu báo lỗi thì chạy các câu lệnh sau:
+1. Chạy lệnh python manange.py makemigrations và python manage.py migrate để khởi tạo csdl
+2. Chạy thử python manage.py runserver, nếu thành công thì chạy tiếp frontend.
+3. Nếu báo lỗi thì chạy các câu lệnh sau:
 ```
 ```diff
 cd Web3/venv
