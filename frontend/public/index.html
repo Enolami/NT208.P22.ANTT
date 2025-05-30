@@ -23,6 +23,34 @@
     -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Smart Scheduler - Hệ thống đặt lịch thông minh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background: #f8f9fb;
+        font-family: 'Inter', Arial, sans-serif;
+        color: #23272f;
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+        transition: background 0.3s;
+      }
+      ::selection {
+        background: #6c63ff22;
+      }
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        background: #f0f1f5;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e0e1ea;
+        border-radius: 4px;
+      }
+      /* Hide duplicate calendar view buttons (Ngày, Tuần, Tháng) in lower section */
+      .calendar-view-duplicate {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

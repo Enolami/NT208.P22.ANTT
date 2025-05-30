@@ -73,9 +73,9 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
     };
 
     return (
-        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth>
-            <DialogTitle>
-                {task ? 'Edit Task' : 'Create New Task'}
+        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Inter', Arial, sans-serif" } }}>
+            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>
+                {task ? 'Chỉnh sửa công việc' : 'Tạo công việc mới'}
             </DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
@@ -88,52 +88,57 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Task Name"
+                            label="Tên công việc"
                             name="task_name"
                             value={formData.task_name}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             fullWidth
-                            label="Description"
+                            label="Mô tả"
                             name="description"
                             multiline
                             rows={3}
                             value={formData.description}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             required
                             fullWidth
                             select
-                            label="Priority"
+                            label="Độ ưu tiên"
                             name="priority"
                             value={formData.priority}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         >
-                            <MenuItem value="low">Low</MenuItem>
-                            <MenuItem value="medium">Medium</MenuItem>
-                            <MenuItem value="high">High</MenuItem>
+                            <MenuItem value="low">Thấp</MenuItem>
+                            <MenuItem value="medium">Trung bình</MenuItem>
+                            <MenuItem value="high">Cao</MenuItem>
                         </TextField>
                         <TextField
                             required
                             fullWidth
-                            label="Start Time"
+                            label="Thời gian bắt đầu"
                             name="start_time"
                             type="datetime-local"
                             value={formData.start_time}
                             onChange={handleChange}
                             InputLabelProps={{ shrink: true }}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             required
                             fullWidth
-                            label="End Time"
+                            label="Thời gian kết thúc"
                             name="end_time"
                             type="datetime-local"
                             value={formData.end_time}
                             onChange={handleChange}
                             InputLabelProps={{ shrink: true }}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             required
@@ -143,6 +148,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         >
                             <MenuItem value="pending">Đang chờ</MenuItem>
                             <MenuItem value="in_progress">Đang thực hiện</MenuItem>
@@ -152,13 +158,14 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onCancel}>Cancel</Button>
+                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Hủy</Button>
                     <Button
                         type="submit"
                         variant="contained"
                         disabled={loading}
+                        sx={{ background: '#3fc8e0', color: '#fff', borderRadius: 2, '&:hover': { background: '#2bb3c0' } }}
                     >
-                        {loading ? 'Saving...' : (task ? 'Update' : 'Create')}
+                        {loading ? 'Đang lưu...' : (task ? 'Cập nhật' : 'Tạo mới')}
                     </Button>
                 </DialogActions>
             </form>
@@ -166,4 +173,4 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
     );
 };
 
-export default TaskForm; 
+export default TaskForm;

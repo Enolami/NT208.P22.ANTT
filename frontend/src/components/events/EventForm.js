@@ -64,8 +64,8 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
     };
 
     return (
-        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth>
-            <DialogTitle>{event ? 'Chỉnh sửa sự kiện' : 'Tạo sự kiện mới'}</DialogTitle>
+        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Inter', Arial, sans-serif" } }}>
+            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>{event ? 'Chỉnh sửa sự kiện' : 'Tạo sự kiện mới'}</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -77,6 +77,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                             name="summary"
                             value={formData.summary}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             fullWidth
@@ -86,6 +87,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                             rows={3}
                             value={formData.description}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             fullWidth
@@ -93,6 +95,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                             name="location"
                             value={formData.location}
                             onChange={handleChange}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             required
@@ -103,6 +106,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                             value={formData.start}
                             onChange={handleChange}
                             InputLabelProps={{ shrink: true }}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                         <TextField
                             required
@@ -113,12 +117,13 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                             value={formData.end}
                             onChange={handleChange}
                             InputLabelProps={{ shrink: true }}
+                            InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         />
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onCancel}>Hủy</Button>
-                    <Button type="submit" variant="contained" disabled={loading}>
+                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Hủy</Button>
+                    <Button type="submit" variant="contained" disabled={loading} sx={{ background: '#3fc8e0', color: '#fff', borderRadius: 2, '&:hover': { background: '#2bb3c0' } }}>
                         {loading ? 'Đang lưu...' : (event ? 'Cập nhật' : 'Tạo mới')}
                     </Button>
                 </DialogActions>
@@ -127,4 +132,4 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
     );
 };
 
-export default EventForm; 
+export default EventForm;

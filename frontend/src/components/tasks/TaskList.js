@@ -168,16 +168,34 @@ const TaskList = () => {
     }
 
     return (
-        <Box p={3}>
+        <Box p={3} sx={{
+            maxWidth: 700,
+            margin: '0 auto',
+            background: '#fff',
+            borderRadius: 3,
+            boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
+            fontFamily: "'Inter', Arial, sans-serif"
+        }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4">Tasks</Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setShowForm(true)}
-                    >
-                        Add New Task
-                    </Button>
+                <Typography variant="h5" fontWeight={700}>Công việc</Typography>
+                <Button
+                    variant="contained"
+                    sx={{
+                        borderRadius: 2,
+                        fontWeight: 700,
+                        background: '#ffb300',
+                        color: '#fff',
+                        fontSize: '1.08rem',
+                        px: 3,
+                        py: 1.5,
+                        boxShadow: '0 2px 8px 0 #ffb30022',
+                        '&:hover': { background: '#ffa000' }
+                    }}
+                    onClick={() => setShowForm(true)}
+                    startIcon={<i className="fa fa-plus" style={{ fontSize: 18 }} />}
+                >
+                    Thêm công việc mới
+                </Button>
             </Box>
 
             {error && (
@@ -201,7 +219,7 @@ const TaskList = () => {
                 />
             )}
 
-            <Paper>
+            <Paper sx={{ boxShadow: '0 2px 8px 0 #3fc8e022' }}>
                 <List>
                     {tasks.length === 0 ? (
                         <ListItem>
@@ -216,7 +234,10 @@ const TaskList = () => {
                                 key={task.id}
                                 divider
                                 sx={{
-                                    bgcolor: getPriorityBg(task.priority)
+                                    bgcolor: getPriorityBg(task.priority),
+                                    borderRadius: 2,
+                                    mb: 1,
+                                    boxShadow: '0 1px 4px 0 #3fc8e011'
                                 }}
                             >
                                 <ListItemText
@@ -227,11 +248,25 @@ const TaskList = () => {
                                                 label={task.priority}
                                                 size="small"
                                                 color={getPriorityColor(task.priority)}
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    fontSize: '0.95rem',
+                                                    borderRadius: 2,
+                                                    px: 1.5,
+                                                    background: task.priority === 'high' ? '#ffd6d6' : task.priority === 'medium' ? '#fffbe6' : '#e8f5e9',
+                                                    color: task.priority === 'high' ? '#e53935' : task.priority === 'medium' ? '#fbc02d' : '#388e3c'
+                                                }}
                                             />
                                             <Chip
                                                 label={getStatusLabel(task.status)}
                                                 size="small"
                                                 color={getStatusColor(task.status)}
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    fontSize: '0.95rem',
+                                                    borderRadius: 2,
+                                                    px: 1.5
+                                                }}
                                             />
                                         </Box>
                                     }
@@ -250,22 +285,22 @@ const TaskList = () => {
                                     <IconButton
                                         edge="end"
                                         onClick={() => setSelectedTask(task)}
-                                        sx={{ mr: 1 }}
+                                        sx={{ mr: 1, color: '#3fc8e0' }}
                                     >
-                                        <EditIcon />
+                                        <i className="fa fa-edit" />
                                     </IconButton>
                                     <IconButton
                                         edge="end"
                                         onClick={() => handleDeleteTask(task.id)}
-                                        sx={{ mr: 1 }}
+                                        sx={{ mr: 1, color: '#e53935' }}
                                     >
-                                        <DeleteIcon />
+                                        <i className="fa fa-trash" />
                                     </IconButton>
                                     {task.status === 'completed' && (
                                         <IconButton
                                             edge="end"
                                             onClick={() => handleUpdateTask(task.id, { ...task, status: 'pending' })}
-                                            sx={{ mr: 1 }}
+                                            sx={{ mr: 1, color: '#bdbdbd' }}
                                         >
                                             <CheckCircleIcon color="disabled" />
                                             <Typography variant="caption" ml={0.5}>Đặt lại chờ</Typography>
@@ -276,13 +311,14 @@ const TaskList = () => {
                                             <IconButton
                                                 edge="end"
                                                 onClick={() => handleCompleteTask(task.id)}
-                                                sx={{ mr: 1 }}
+                                                sx={{ mr: 1, color: '#388e3c' }}
                                             >
                                                 <CheckCircleIcon color="success" />
                                             </IconButton>
                                             <IconButton
                                                 edge="end"
                                                 onClick={() => handleCancelTask(task.id)}
+                                                sx={{ color: '#e53935' }}
                                             >
                                                 <CancelIcon color="error" />
                                             </IconButton>
@@ -292,6 +328,7 @@ const TaskList = () => {
                                         <IconButton
                                             edge="end"
                                             onClick={() => handleUpdateTask(task.id, { ...task, status: 'pending' })}
+                                            sx={{ color: '#3fc8e0' }}
                                         >
                                             <RestoreIcon color="primary" />
                                             <Typography variant="caption" ml={0.5}>Khôi phục</Typography>
@@ -307,4 +344,4 @@ const TaskList = () => {
     );
 };
 
-export default TaskList; 
+export default TaskList;

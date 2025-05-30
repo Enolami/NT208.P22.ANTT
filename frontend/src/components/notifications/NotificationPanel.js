@@ -110,15 +110,22 @@ const NotificationPanel = () => {
     };
 
     return (
-        <Box sx={{ position: 'relative' }}>
-            <Tooltip title="Notifications">
+        <Box sx={{ position: 'relative', fontFamily: "'Inter', Arial, sans-serif", fontSize: '1.08rem', color: '#23272f', fontWeight: 700 }}>
+            <Tooltip title="Thông báo">
                 <IconButton
                     color="inherit"
                     onClick={() => setIsOpen(!isOpen)}
-                    sx={{ position: 'relative' }}
+                    sx={{
+                        position: 'relative',
+                        background: isOpen ? '#3fc8e0' : 'transparent',
+                        transition: 'background 0.2s',
+                        borderRadius: 2,
+                        boxShadow: isOpen ? '0 4px 16px 0 #23272f33' : 'none',
+                        '&:hover': { background: '#3fc8e0' }
+                    }}
                 >
-                    <Badge badgeContent={unreadCount} color="error">
-                        <NotificationsIcon />
+                    <Badge badgeContent={unreadCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '1rem', minWidth: 22, height: 22, fontWeight: 800 } }}>
+                        <NotificationsIcon sx={{ color: isOpen ? '#fff' : '#3fc8e0', fontSize: '2.1rem', fontWeight: 800 }} />
                     </Badge>
                 </IconButton>
             </Tooltip>
@@ -129,50 +136,96 @@ const NotificationPanel = () => {
                         position: 'absolute',
                         right: 0,
                         top: '100%',
-                        width: 350,
-                        maxHeight: 500,
+                        width: 370,
+                        maxHeight: 520,
                         overflow: 'auto',
                         zIndex: 1000,
                         mt: 1,
+                        borderRadius: 3,
+                        boxShadow: '0 8px 32px 0 #23272f33',
+                        p: 0,
+                        background: '#fafdff'
                     }}
                 >
-                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6">Notifications</Typography>
+                    <Box
+                        sx={{
+                            p: 2.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            background: 'linear-gradient(90deg, #3fc8e0 0%, #b2ebf2 100%)',
+                            borderTopLeftRadius: 12,
+                            borderTopRightRadius: 12,
+                            color: '#23272f',
+                            fontWeight: 800,
+                            boxShadow: '0 2px 8px 0 #23272f22'
+                        }}
+                    >
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <NotificationsIcon sx={{ color: '#23272f', fontSize: '1.5rem', fontWeight: 800 }} />
+                            <Typography variant="h6" sx={{ fontWeight: 800, fontSize: 18, letterSpacing: 0.5, color: '#23272f' }}>
+                                <strong>Thông báo mới</strong>
+                            </Typography>
+                        </Box>
                         {unreadCount > 0 && (
                             <Button
                                 startIcon={<DoneAllIcon />}
                                 onClick={handleMarkAllAsRead}
                                 size="small"
+                                sx={{
+                                    background: '#fff',
+                                    color: '#3fc8e0',
+                                    borderRadius: 2,
+                                    fontWeight: 800,
+                                    px: 2,
+                                    py: 0.5,
+                                    boxShadow: 'none',
+                                    fontSize: '1.05rem',
+                                    '&:hover': { background: '#e0f7fa', color: '#3fc8e0' }
+                                }}
                             >
-                                Mark all as read
+                                Đọc tất cả
                             </Button>
                         )}
                     </Box>
                     <Divider />
-                    <List>
+                    <List sx={{ p: 0 }}>
                         {notifications.length === 0 ? (
                             <ListItem>
-                                <ListItemText primary="No notifications" />
+                                <ListItemText primary={<span style={{ fontWeight: 700, color: '#23272f' }}>Không có thông báo nào</span>} />
                             </ListItem>
                         ) : (
                             notifications.map((notification) => (
                                 <ListItem
                                     key={notification.id}
                                     sx={{
-                                        bgcolor: notification.status === 'unread' ? 'action.hover' : 'inherit',
+                                        bgcolor: notification.status === 'unread'
+                                            ? '#e0f7fa'
+                                            : '#fff',
                                         borderLeft: 4,
                                         borderColor: getPriorityColor(notification.priority),
+                                        alignItems: 'flex-start',
+                                        py: 2.2,
+                                        px: 2,
+                                        mb: 0.5,
+                                        borderRadius: 2,
+                                        boxShadow: notification.status === 'unread' ? '0 2px 8px 0 #23272f22' : 'none',
+                                        transition: 'background 0.2s, box-shadow 0.2s'
                                     }}
                                 >
                                     <ListItemText
-                                        primary={notification.title}
+                                        primary={
+                                            <Typography sx={{ fontWeight: notification.status === 'unread' ? 800 : 700, color: '#23272f', fontSize: '1.08rem' }}>
+                                                {notification.title}
+                                            </Typography>
+                                        }
                                         secondary={
                                             <>
-                                                <Typography component="span" variant="body2" color="text.primary">
+                                                <Typography component="span" variant="body2" sx={{ fontSize: '1.05rem', color: '#23272f', fontWeight: 700 }}>
                                                     {notification.message}
                                                 </Typography>
                                                 <br />
-                                                <Typography component="span" variant="caption" color="text.secondary">
+                                                <Typography component="span" variant="caption" sx={{ fontSize: '1rem', color: '#23272f', fontWeight: 700 }}>
                                                     {formatDate(notification.created_at)}
                                                 </Typography>
                                             </>
@@ -180,19 +233,21 @@ const NotificationPanel = () => {
                                     />
                                     <Box>
                                         {notification.status === 'unread' && (
-                                            <Tooltip title="Mark as read">
+                                            <Tooltip title="Đánh dấu đã đọc">
                                                 <IconButton
                                                     size="small"
                                                     onClick={() => handleMarkAsRead(notification.id)}
+                                                    sx={{ color: '#3fc8e0', background: '#e0f7fa', fontWeight: 800, '&:hover': { background: '#b2ebf2' } }}
                                                 >
                                                     <CheckIcon fontSize="small" />
                                                 </IconButton>
                                             </Tooltip>
                                         )}
-                                        <Tooltip title="Dismiss">
+                                        <Tooltip title="Ẩn thông báo">
                                             <IconButton
                                                 size="small"
                                                 onClick={() => handleDismiss(notification.id)}
+                                                sx={{ color: '#bdbdbd', background: '#f8f9fb', fontWeight: 800, '&:hover': { background: '#e0e0e0' } }}
                                             >
                                                 <CloseIcon fontSize="small" />
                                             </IconButton>
@@ -208,4 +263,4 @@ const NotificationPanel = () => {
     );
 };
 
-export default NotificationPanel; 
+export default NotificationPanel;

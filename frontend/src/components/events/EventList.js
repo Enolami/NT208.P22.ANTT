@@ -80,13 +80,31 @@ const EventList = () => {
     }
 
     return (
-        <Box p={3}>
+        <Box p={3} sx={{
+            maxWidth: 700,
+            margin: '0 auto',
+            background: '#fff',
+            borderRadius: 3,
+            boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
+            fontFamily: "'Inter', Arial, sans-serif"
+        }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4">Sự kiện</Typography>
+                <Typography variant="h5" fontWeight={700}>Sự kiện</Typography>
                 <Button
                     variant="contained"
-                    color="primary"
+                    sx={{
+                        borderRadius: 2,
+                        fontWeight: 700,
+                        background: '#3fc8e0',
+                        color: '#fff',
+                        fontSize: '1.08rem',
+                        px: 3,
+                        py: 1.5,
+                        boxShadow: '0 2px 8px 0 #3fc8e022',
+                        '&:hover': { background: '#2bb3c0' }
+                    }}
                     onClick={() => setShowForm(true)}
+                    startIcon={<i className="fa fa-plus" style={{ fontSize: 18 }} />}
                 >
                     Thêm sự kiện mới
                 </Button>
@@ -117,9 +135,18 @@ const EventList = () => {
                 {events.length === 0 && !loading && <ListItem><ListItemText primary="Không có sự kiện nào" /></ListItem>}
                 {events.map(event => (
                     <React.Fragment key={event.id}>
-                        <ListItem alignItems="flex-start">
+                        <ListItem alignItems="flex-start" sx={{
+                            borderRadius: 2,
+                            mb: 1,
+                            boxShadow: '0 1px 4px 0 #3fc8e011',
+                            bgcolor: '#fafdff'
+                        }}>
                             <ListItemText
-                                primary={event.title}
+                                primary={
+                                    <Typography sx={{ fontWeight: 600, fontSize: '1.08rem', color: '#3fc8e0' }}>
+                                        {event.title}
+                                    </Typography>
+                                }
                                 secondary={<>
                                     <Typography component="span" variant="body2" color="text.primary">{event.description}</Typography><br/>
                                     <Typography component="span" variant="caption" color="text.secondary">
@@ -130,13 +157,13 @@ const EventList = () => {
                                     )}
                                 </>}
                             />
-                            {event.external_provider && <Chip label={event.external_provider} size="small" sx={{ ml: 1 }} />}
+                            {event.external_provider && <Chip label={event.external_provider} size="small" sx={{ ml: 1, background: '#e0f7fa', color: '#3fc8e0', fontWeight: 600 }} />}
                             <ListItemSecondaryAction>
-                                <IconButton edge="end" color="primary" onClick={() => setSelectedEvent(event)}>
-                                    <EditIcon />
+                                <IconButton edge="end" color="primary" onClick={() => setSelectedEvent(event)} sx={{ color: '#3fc8e0' }}>
+                                    <i className="fa fa-edit" />
                                 </IconButton>
-                                <IconButton edge="end" color="error" onClick={() => handleDeleteEvent(event.id)}>
-                                    <DeleteIcon />
+                                <IconButton edge="end" color="error" onClick={() => handleDeleteEvent(event.id)} sx={{ color: '#e53935' }}>
+                                    <i className="fa fa-trash" />
                                 </IconButton>
                             </ListItemSecondaryAction>
                         </ListItem>
@@ -148,4 +175,4 @@ const EventList = () => {
     );
 };
 
-export default EventList; 
+export default EventList;

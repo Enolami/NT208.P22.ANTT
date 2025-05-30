@@ -198,7 +198,7 @@ const CalendarSync = () => {
             {/* Google Calendar Section */}
             <Paper sx={{ p: 3, mb: 3 }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width={32} height={32} />
+                    <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" width={32} height={32} />
                     <Typography variant="h6">Google Calendar</Typography>
                     <Chip 
                         label={googleStatus} 
@@ -250,7 +250,7 @@ const CalendarSync = () => {
             {/* Outlook Section */}
             <Paper sx={{ p: 3 }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Microsoft_Office_Outlook_%282018–present%29.svg" alt="Outlook" width={32} height={32} />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" width={32} height={32} />
                     <Typography variant="h6">Outlook Calendar</Typography>
                     <Chip 
                         label={outlookStatus} 

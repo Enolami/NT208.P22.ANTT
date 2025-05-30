@@ -66,6 +66,7 @@ const Calendar = () => {
     });
     const [addError, setAddError] = useState('');
     const [addLoading, setAddLoading] = useState(false);
+    const [showTodayTasks, setShowTodayTasks] = useState(false);
 
     const fetchAllTasksAndEvents = async () => {
         console.log('[LOG] fetchAllTasksAndEvents called');
@@ -634,7 +635,7 @@ const Calendar = () => {
                     {currentWeek.format('DD/MM/YYYY')} - {currentWeek.add(6, 'day').format('DD/MM/YYYY')}
                 </Typography>
                 <IconButton onClick={handleNextWeek}></IconButton>
-                <Button onClick={handleToday} sx={{ ml: 2 }} variant="outlined">Hôm nay</Button>
+                {/* Xóa nút Hôm nay ở đây */}
             </Box>
             <Box display="flex" mb={1}>
                 {weekDaysVN.map((day, idx) => (
@@ -715,7 +716,18 @@ const Calendar = () => {
     );
 
     return (
-        <Box p={3}>
+        <Box p={3} sx={{
+            maxWidth: 1100,
+            margin: '0 auto',
+            background: '#fff',
+            borderRadius: 3,
+            boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
+            fontFamily: "'Inter', Arial, sans-serif"
+        }}>
+            {/* <Box display="flex" alignItems="center" mb={2}>
+                <Typography variant="h5" fontWeight={700} sx={{ mr: 3 }}>Lịch</Typography>
+                {/* Di chuyển ToggleButtonGroup xuống dưới *}
+            </Box> */}
             {lastSyncTime && (
                 <Typography variant="caption" color="text.secondary" mb={2} display="block">
                     Last synced: {lastSyncTime.toLocaleString()}
@@ -731,31 +743,101 @@ const Calendar = () => {
                     {globalSyncMessage}
                 </Alert>
             )}
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Box>
-                    <ToggleButtonGroup
-                        value={viewMode}
-                        exclusive
-                        onChange={handleViewChange}
-                        aria-label="calendar view mode"
-                    >
-                        <ToggleButton value="today">Ngày</ToggleButton>
-                        <ToggleButton value="week">Tuần</ToggleButton>
-                        <ToggleButton value="month">Tháng</ToggleButton>
-                    </ToggleButtonGroup>
-                </Box>
+            {/* Đặt ToggleButtonGroup NGAY DƯỚI ĐÂY, phía trên dãy ngày */}
+            <Box display="flex" mb={2}>
+                <ToggleButtonGroup
+                    value={viewMode}
+                    exclusive
+                    onChange={handleViewChange}
+                    aria-label="calendar view mode"
+                    sx={{
+                        background: '#fafdff',
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        boxShadow: '0 2px 8px 0 #3fc8e022',
+                        '& .MuiToggleButton-root': {
+                            background: '#fff',
+                            color: '#3fc8e0',
+                            border: 'none',
+                            borderRadius: 2,
+                            fontWeight: 700,
+                            fontSize: '1.08rem',
+                            px: 3,
+                            py: 1.5,
+                            '&.Mui-selected': {
+                                background: '#3fc8e0',
+                                color: '#fff',
+                            }
+                        }
+                    }}
+                >
+                    <ToggleButton value="today">Ngày</ToggleButton>
+                    <ToggleButton value="week">Tuần</ToggleButton>
+                    <ToggleButton value="month">Tháng</ToggleButton>
+                </ToggleButtonGroup>
+                <Box flex={1} />
                 <Box display="flex" gap={2}>
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
+                    <Button
+                        onClick={() => {
+                            handleToday();
+                            setShowTodayTasks(true);
+                        }}
+                        sx={{
+                            background: "#3fc8e0",
+                            color: "#fff",
+                            borderRadius: 2,
+                            fontWeight: 700,
+                            fontSize: '1.08rem',
+                            px: 3,
+                            py: 1.5,
+                            boxShadow: '0 2px 8px 0 #3fc8e022',
+                            '&:hover': { background: '#2bb3c0' }
+                        }}
+                        startIcon={<i className="fa fa-calendar-day" style={{ fontSize: 18 }} />}
+                    >
+                        Hôm nay
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            background: "#fff",
+                            color: "#3fc8e0",
+                            borderRadius: 2,
+                            fontWeight: 700,
+                            fontSize: '1.08rem',
+                            px: 3,
+                            py: 1.5,
+                            boxShadow: '0 2px 8px 0 #3fc8e022',
+                            border: '1.5px solid #3fc8e0',
+                            '&:hover': { background: '#e0f7fa', color: '#3fc8e0' }
+                        }}
                         onClick={() => setShowGlobalSyncDialog(true)}
                         disabled={globalSyncLoading}
+                        startIcon={<i className="fa fa-cloud" style={{ fontSize: 18 }} />}
                     >
                         {globalSyncLoading ? 'Syncing...' : 'Global Sync'}
                     </Button>
-                    <Button variant="contained" onClick={handleAddClick} startIcon={<AddIcon />}>Thêm mới</Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleAddClick}
+                        startIcon={<AddIcon sx={{ fontSize: 24 }} />}
+                        sx={{
+                            background: "#ffb300",
+                            color: "#fff",
+                            borderRadius: 2,
+                            fontWeight: 700,
+                            fontSize: '1.13rem',
+                            px: 3,
+                            py: 1.5,
+                            boxShadow: '0 4px 16px 0 #ffb30022',
+                            '&:hover': { background: '#ffa000' }
+                        }}
+                    >
+                        Thêm mới
+                    </Button>
                 </Box>
             </Box>
+            {/* XÓA hoặc COMMENT ToggleButtonGroup ở trên cùng (nếu còn) và các ToggleButtonGroup bị lặp khác */}
             {viewMode === 'today' && (
                 <Box>
                     <Typography variant="h6" mb={2}>Công việc & sự kiện hôm nay ({today.format('DD/MM/YYYY')})</Typography>
@@ -1047,8 +1129,112 @@ const Calendar = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            {showTodayTasks && (
+                <Dialog open={showTodayTasks} onClose={() => setShowTodayTasks(false)} maxWidth="sm" fullWidth>
+                    <DialogTitle>Danh sách công việc hôm nay ({today.format('DD/MM/YYYY')})</DialogTitle>
+                    <DialogContent>
+                        <List>
+                            {todayItems.localTasks.length === 0 && todayItems.googleTasks.length === 0 && todayItems.outlookTasks.length === 0 && todayItems.googleEvents.length === 0 && todayItems.outlookEvents.length === 0 && todayItems.eventModelEvents.length === 0 ? (
+                                <ListItem>
+                                    <ListItemText primary="Không có công việc hoặc sự kiện nào" />
+                                </ListItem>
+                            ) : (
+                                <>
+                                    {todayItems.localTasks.map(task => (
+                                        <ListItem key={`task-${task.id}`}>
+                                            <ListItemText
+                                                primary={task.task_name}
+                                                secondary={
+                                                    <>
+                                                        <Typography component="span" variant="body2" color="text.primary">{task.description}</Typography><br/>
+                                                        <Typography component="span" variant="caption" color="text.secondary">{dayjs(task.due_date).format('HH:mm')} - {dayjs(task.end_time).format('HH:mm')}</Typography>
+                                                    </>
+                                                }
+                                            />
+                                            <Chip label={getStatusLabel(task.status)} size="small" color={getStatusColor(task.status)} sx={{ ml: 1 }} />
+                                        </ListItem>
+                                    ))}
+                                    {todayItems.googleTasks.map(task => (
+                                        <ListItem key={`gtask-${task.id}`}>
+                                            <ListItemText
+                                                primary={task.task_name}
+                                                secondary={
+                                                    <>
+                                                        <Typography component="span" variant="body2" color="text.primary">{task.description}</Typography><br/>
+                                                        <Typography component="span" variant="caption" color="text.secondary">{dayjs(task.due_date).format('HH:mm')}</Typography>
+                                                    </>
+                                                }
+                                            />
+                                            <Chip label="Google Task" size="small" color="success" sx={{ ml: 1 }} />
+                                        </ListItem>
+                                    ))}
+                                    {todayItems.outlookTasks.map(task => (
+                                        <ListItem key={`otask-${task.id}`}>
+                                            <ListItemText
+                                                primary={task.task_name}
+                                                secondary={
+                                                    <>
+                                                        <Typography component="span" variant="body2" color="text.primary">{task.description}</Typography><br/>
+                                                        <Typography component="span" variant="caption" color="text.secondary">{dayjs(task.start_time).format('HH:mm')}</Typography>
+                                                    </>
+                                                }
+                                            />
+                                            <Chip label="Outlook Task" size="small" color="info" sx={{ ml: 1 }} />
+                                        </ListItem>
+                                    ))}
+                                    {todayItems.googleEvents.map(event => (
+                                        <ListItem key={`event-${event.id}`}>
+                                            <ListItemText
+                                                primary={event.task_name}
+                                                secondary={
+                                                    <>
+                                                        <Typography component="span" variant="body2" color="text.primary">{event.description}</Typography><br/>
+                                                        <Typography component="span" variant="caption" color="text.secondary">{dayjs(event.start_time).format('HH:mm')} - {dayjs(event.end_time).format('HH:mm')}</Typography>
+                                                    </>
+                                                }
+                                            />
+                                            <Chip label="Google Calendar" size="small" color="primary" sx={{ ml: 1 }} />
+                                        </ListItem>
+                                    ))}
+                                    {todayItems.outlookEvents.map(event => (
+                                        <ListItem key={`oevent-${event.id}`}>
+                                            <ListItemText
+                                                primary={event.task_name}
+                                                secondary={
+                                                    <>
+                                                        <Typography component="span" variant="body2" color="text.primary">{event.description}</Typography><br/>
+                                                        <Typography component="span" variant="caption" color="text.secondary">{dayjs(event.start_time).format('HH:mm')} - {dayjs(event.end_time).format('HH:mm')}</Typography>
+                                                    </>
+                                                }
+                                            />
+                                            <Chip label="Outlook Calendar" size="small" color="info" sx={{ ml: 1 }} />
+                                        </ListItem>
+                                    ))}
+                                    {todayItems.eventModelEvents.map(event => (
+                                        <ListItem key={`emevent-${event.id}`}>
+                                            <ListItemText
+                                                primary={event.task_name}
+                                                secondary={
+                                                    <>
+                                                        <Typography component="span" variant="body2" color="text.primary">{event.description}</Typography><br/>
+                                                        <Typography component="span" variant="caption" color="text.secondary">{dayjs(event.start_time).format('HH:mm')} - {dayjs(event.end_time).format('HH:mm')}</Typography>
+                                                    </>
+                                                }
+                                            />
+                                            <Chip label="Event Model" size="small" color="warning" sx={{ ml: 1 }} />
+                                        </ListItem>
+                                    ))}
+                                </>
+                            )}
+                        </List>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setShowTodayTasks(false)}>Đóng</Button>
+                    </DialogActions>
+                </Dialog>
+            )}
         </Box>
     );
 };
 
-export default Calendar; 
+export default Calendar;
