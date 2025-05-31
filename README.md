@@ -2,6 +2,14 @@
 -- Các bước cần chuẩn bị để chạy chương trình --
 ```
 ```diff
++ Linux
+Web3: 
+source /Web3/venv/bin/activate
+python3 /Web3/backend/manage.py runserver
+
+frontend:
+npm start
+
 + Mysql
 1. Tải và cài đặt mysql
 2. Tạo tài khoản root
