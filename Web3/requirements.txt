@@ -1,0 +1,11 @@
+Django>=4.2.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+PyJWT>=2.8.0
+python-dotenv>=1.0.0
+djangorestframework-simplejwt>=5.3.0
+mysqlclient>=2.2.0 
+requests
+google-auth
+google-api-python-client
+msal

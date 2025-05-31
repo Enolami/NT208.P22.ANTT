@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#007AFF" />
+    <meta name="description" content="Hệ thống đặt lịch thông minh với AI - Quản lý công việc, đồng bộ lịch và tối ưu thời gian" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Modern fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <title>Smart Scheduler - Hệ thống đặt lịch thông minh</title>
+    <style>
+      body {
+        background: linear-gradient(135deg, #f2f2f2 0%, #e9f0ff 100%);
+        font-family: 'Roboto', 'Open Sans', Arial, sans-serif;
+        color: #23272f;
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+        transition: background 0.3s;
+      }
+      h1, h2, h3, .logo-font {
+        font-family: 'Poppins', 'Roboto', Arial, sans-serif;
+        letter-spacing: -0.5px;
+      }
+      ::selection {
+        background: #007aff22;
+      }
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        background: #f0f1f5;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e0e1ea;
+        border-radius: 4px;
+      }
+      /* Hide duplicate calendar view buttons (Ngày, Tuần, Tháng) in lower section */
+      .calendar-view-duplicate {
+        display: none !important;
+      }
+      /* Top nav bar */
+      .top-navbar {
+        background: #fff;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        padding: 0 32px;
+        display: flex;
+        align-items: center;
+        height: 64px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .top-navbar .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .top-navbar .logo img {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px #007aff22;
+      }
+      .top-navbar .logo-title {
+        font-family: 'Poppins', 'Roboto', Arial, sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #007AFF;
+        letter-spacing: -1px;
+      }
+      .top-navbar .nav-actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .top-navbar .nav-actions .notif-btn {
+        background: #f2f2f2;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #007AFF;
+        box-shadow: 0 2px 8px #007aff11;
+        cursor: pointer;
+        transition: background 0.2s;
+        position: relative;
+      }
+      .top-navbar .nav-actions .notif-btn:hover {
+        background: #e6f0ff;
+      }
+      .top-navbar .nav-actions .notif-dot {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        width: 8px;
+        height: 8px;
+        background: #FF9500;
+        border-radius: 50%;
+        border: 2px solid #fff;
+      }
+      /* Responsive */
+      @media (max-width: 600px) {
+        .top-navbar {
+          padding: 0 10px;
+          height: 54px;
+        }
+        .top-navbar .logo-title {
+          font-size: 1.1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-navbar">
+      <div class="logo">
+        <img src="%PUBLIC_URL%/logo192.png" alt="Smart Scheduler Logo" />
+        <span class="logo-title">Smart Scheduler</span>
+      </div>
+      <div class="nav-actions">
+        <button class="notif-btn" id="notifBtn" title="Thông báo">
+          <i class="fa fa-bell"></i>
+          <span class="notif-dot" id="notifDot" style="display:none"></span>
+        </button>
+      </div>
+    </div>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>

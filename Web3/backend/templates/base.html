@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hệ thống đặt lịch thông minh với AI - Quản lý công việc, đồng bộ lịch và tối ưu thời gian">
+    <title>{% block title %}Smart Scheduler - Hệ thống đặt lịch thông minh{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#6C63FF',
+                        success: '#48BB78',
+                        warning: '#ED8936',
+                        danger: '#F56565',
+                        light: '#F7FAFC',
+                        dark: '#1A202C',
+                    }
+                }
+            }
+        };
+        
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+    
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E0;
+            border-radius: 3px;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4A5568;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
+        <div class="min-h-screen pb-16 md:pb-0">
+            <!-- Header -->
+            <header class="bg-white dark:bg-gray-800 shadow-md">
+                <div class="container mx-auto px-4 py-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <img src="https://i.imgur.com/vqZpK07.png" alt="Logo" class="w-10 h-10 mr-3" />
+                            <h1 class="text-xl font-bold text-primary">SmartScheduler</h1>
+                        </div>
+                        <div class="flex items-center">
+                            <button onclick="toggleDarkMode()" class="p-2 rounded-full mr-2 hover:bg-gray-200 dark:hover:bg-gray-700">
+                                <i class="fas fa-moon dark:hidden"></i>
+                                <i class="fas fa-sun hidden dark:block"></i>
+                            </button>
+                            {% if user.is_authenticated %}
+                                <div class="ml-3 relative">
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 mr-4">Welcome, {{ user.username }}</span>
+                                        <a href="{% url 'logout' %}" class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                        </a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                                    <i class="fas fa-sign-in-alt mr-2"></i> Login
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="container mx-auto px-4 py-4">
+                <div class="lg:grid lg:grid-cols-5 lg:gap-4">
+                    <!-- Sidebar -->
+                    <div class="hidden md:block md:col-span-1">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-4">
+                            <div class="space-y-1">
+                                <a href="{% url 'tasks:task_list' %}" class="w-full text-left p-3 rounded-lg block {% if request.resolver_match.url_name == 'task_list' %}bg-primary text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %}">
+                                    <i class="fas fa-tasks mr-2"></i> Công việc
+                                </a>
+                                <a href="{% url 'events:event_list' %}" class="w-full text-left p-3 rounded-lg block {% if request.resolver_match.url_name == 'event_list' %}bg-primary text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %}">
+                                    <i class="fas fa-calendar-alt mr-2"></i> Lịch
+                                </a>
+                                <a href="{% url 'aiassistant:interaction_list' %}" class="w-full text-left p-3 rounded-lg block {% if request.resolver_match.url_name == 'interaction_list' %}bg-primary text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %}">
+                                    <i class="fas fa-robot mr-2"></i> Trợ lý AI
+                                </a>
+                                <a href="{% url 'calendarsync:index' %}" class="w-full text-left p-3 rounded-lg block {% if request.resolver_match.url_name == 'index' %}bg-primary text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-700{% endif %}">
+                                    <i class="fas fa-sync mr-2"></i> Đồng bộ
+                                </a>
+                            </div>
+                        </div>
+                        <!-- ...thông báo mới... -->
+                    </div>
+                    <!-- Main content -->
+                    <div class="lg:col-span-4">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </main>
+            <!-- ...bottom nav for mobile nếu muốn... -->
+        </div>
+        <script>
+            function toggleDarkMode() {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+        </script>
+    </body>
+</html>
