@@ -4,8 +4,8 @@
 ```diff
 + Linux
 Web3: 
-source /Web3/venv/bin/activate
-python3 /Web3/backend/manage.py runserver
+source Web3/venv/bin/activate
+python3 Web3/backend/manage.py runserver
 
 frontend:
 npm start

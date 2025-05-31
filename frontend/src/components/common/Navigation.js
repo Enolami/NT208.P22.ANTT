@@ -16,7 +16,9 @@ import {
     Assignment as AssignmentIcon,
     CalendarToday as CalendarTodayIcon,
     SmartToy as SmartToyIcon,
-    Menu as MenuIcon
+    Menu as MenuIcon,
+    Brightness4 as Brightness4Icon,
+    Brightness7 as Brightness7Icon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../notifications/NotificationPanel';
@@ -26,6 +28,9 @@ const drawerWidth = 240;
 const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     const { user, logout } = useAuth();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(() => {
+        return localStorage.getItem('theme') === 'dark';
+    });
 
     const handleLogout = () => {
         logout();
@@ -33,6 +38,15 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
+    };
+
+    const handleThemeToggle = () => {
+        setDarkMode((prev) => {
+            const newMode = !prev;
+            localStorage.setItem('theme', newMode ? 'dark' : 'light');
+            document.body.setAttribute('data-theme', newMode ? 'dark' : 'light');
+            return newMode;
+        });
     };
 
     const drawerContent = (
@@ -94,7 +108,12 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
 
     return (
         <>
-            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+            <AppBar position="fixed" sx={{
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+                background: darkMode ? '#23272f' : '#4361ee',
+                color: darkMode ? '#f8f9fa' : '#fff',
+                fontFamily: "'Inter', Arial, sans-serif"
+            }}>
                 <Toolbar sx={isMobile ? { minHeight: 56, px: 1, display: 'flex', justifyContent: 'space-between' } : {}}>
                     {isMobile ? (
                         <>
@@ -121,9 +140,17 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     Smart Scheduler
                                 </Typography>
                             </Box>
-                            {/* Right: Notification + Logout */}
+                            {/* Right: Notification + Theme Toggle + Logout */}
                             <Box sx={{ display: 'flex', alignItems: 'center', flex: '0 0 auto', gap: 1 }}>
                                 <NotificationPanel isMobile={isMobile} />
+                                <IconButton
+                                    color="inherit"
+                                    onClick={handleThemeToggle}
+                                    sx={{ ml: 1 }}
+                                    title={darkMode ? "Chuyển sang Light Mode" : "Chuyển sang Dark Mode"}
+                                >
+                                    {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                                </IconButton>
                                 <Button color="inherit" onClick={handleLogout} sx={{ minWidth: 0, px: 1 }}>
                                     Đăng xuất
                                 </Button>
@@ -136,6 +163,14 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                 <NotificationPanel isMobile={isMobile} />
+                                <IconButton
+                                    color="inherit"
+                                    onClick={handleThemeToggle}
+                                    sx={{ ml: 1 }}
+                                    title={darkMode ? "Chuyển sang Light Mode" : "Chuyển sang Dark Mode"}
+                                >
+                                    {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+                                </IconButton>
                                 <Typography variant="body1">
                                     Chào, {user?.email}
                                 </Typography>
@@ -185,4 +220,4 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     );
 };
 
-export default Navigation; 
+export default Navigation;

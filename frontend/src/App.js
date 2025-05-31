@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CssBaseline, ThemeProvider, createTheme, Toolbar, useMediaQuery } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -12,55 +12,45 @@ import CalendarSync from './components/calendar/CalendarSync';
 import EventList from './components/events/EventList';
 import AIAssistant from './components/ai/AIAssistant';
 
-// Create theme instance with mobile-first approach
-const theme = createTheme({
+// Define the design tokens for light and dark mode
+const getDesignTokens = (mode) => ({
   palette: {
+    mode,
     primary: {
-      main: '#1976d2',
+      main: '#4361ee',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#06d6a0',
     },
+    background: {
+      default: mode === 'dark' ? '#23272f' : '#f8f9fa',
+      paper: mode === 'dark' ? '#23272f' : '#fff',
+    },
+    text: {
+      primary: mode === 'dark' ? '#f8f9fa' : '#212529',
+      secondary: mode === 'dark' ? '#b0b0b0' : '#6c757d',
+    },
+  },
+  typography: {
+    fontFamily: "'Inter', Arial, sans-serif",
+    h1: { fontSize: '2rem', fontWeight: 700 },
+    h2: { fontSize: '1.75rem', fontWeight: 700 },
+    h3: { fontSize: '1.5rem', fontWeight: 700 },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          padding: '8px 16px',
-          '@media (max-width: 600px)': {
-            padding: '6px 12px',
-            fontSize: '0.875rem',
-          },
+          borderRadius: 8,
+          fontWeight: 600,
         },
       },
     },
-    MuiCard: {
+    MuiPaper: {
       styleOverrides: {
         root: {
-          '@media (max-width: 600px)': {
-            borderRadius: '8px',
-          },
+          borderRadius: 16,
         },
-      },
-    },
-  },
-  typography: {
-    h1: {
-      fontSize: '2rem',
-      '@media (max-width: 600px)': {
-        fontSize: '1.5rem',
-      },
-    },
-    h2: {
-      fontSize: '1.75rem',
-      '@media (max-width: 600px)': {
-        fontSize: '1.25rem',
-      },
-    },
-    h3: {
-      fontSize: '1.5rem',
-      '@media (max-width: 600px)': {
-        fontSize: '1.1rem',
       },
     },
   },
@@ -107,6 +97,22 @@ const MainApp = () => {
 };
 
 function App() {
+  const [mode, setMode] = useState(() => localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    const handler = () => {
+      setMode(localStorage.getItem('theme') || 'light');
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', mode);
+  }, [mode]);
+
+  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
