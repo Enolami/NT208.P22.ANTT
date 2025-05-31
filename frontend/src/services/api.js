@@ -63,6 +63,8 @@ export const eventsAPI = {
     createEvent: async (eventData) => {
         try {
             const response = await api.post('/events/api/', eventData);
+            // Fix: Remove passing event_id as a query param or keyword argument
+            // Just call the notification endpoint with the event id in the URL path
             await api.get(`/notifications/create/event/${response.data.id}/`);
             return response.data;
         } catch (error) {
@@ -70,7 +72,6 @@ export const eventsAPI = {
             throw error;
         }
     },
-    
     updateEvent: (id, eventData) => api.put(`/events/api/${id}/`, eventData),
     deleteEvent: (id) => api.delete(`/events/api/${id}/`),
 };
@@ -83,4 +84,4 @@ export const notificationsAPI = {
     markAllAsRead: () => api.post('/notifications/mark-all-read/'),
 };
 
-export default api; 
+export default api;

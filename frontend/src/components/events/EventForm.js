@@ -38,7 +38,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
             const end = dayjs(formData.end);
             const now = dayjs();
             if (end.isBefore(now)) {
-                setError('Thời gian kết thúc không được ở trong quá khứ.');
+                setError('End time cannot be in the past.');
                 setLoading(false);
                 return;
             }
@@ -52,7 +52,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
             await onSubmit(payload);
             onCancel();
         } catch (err) {
-            setError('Không thể lưu sự kiện.');
+            setError('Unable to save event.');
         } finally {
             setLoading(false);
         }
@@ -64,8 +64,8 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
     };
 
     return (
-        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Inter', Arial, sans-serif" } }}>
-            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>{event ? 'Chỉnh sửa sự kiện' : 'Tạo sự kiện mới'}</DialogTitle>
+        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Quicksand', Arial, sans-serif" } }}>
+            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>{event ? 'Edit Event' : 'Create New Event'}</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -73,7 +73,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Tên sự kiện"
+                            label="Event Name"
                             name="summary"
                             value={formData.summary}
                             onChange={handleChange}
@@ -81,7 +81,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         />
                         <TextField
                             fullWidth
-                            label="Mô tả"
+                            label="Description"
                             name="description"
                             multiline
                             rows={3}
@@ -91,7 +91,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         />
                         <TextField
                             fullWidth
-                            label="Địa điểm"
+                            label="Location"
                             name="location"
                             value={formData.location}
                             onChange={handleChange}
@@ -100,7 +100,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Bắt đầu"
+                            label="Start"
                             name="start"
                             type="datetime-local"
                             value={formData.start}
@@ -111,7 +111,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Kết thúc"
+                            label="End"
                             name="end"
                             type="datetime-local"
                             value={formData.end}
@@ -122,9 +122,9 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Hủy</Button>
+                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Cancel</Button>
                     <Button type="submit" variant="contained" disabled={loading} sx={{ background: '#3fc8e0', color: '#fff', borderRadius: 2, '&:hover': { background: '#2bb3c0' } }}>
-                        {loading ? 'Đang lưu...' : (event ? 'Cập nhật' : 'Tạo mới')}
+                        {loading ? 'Saving...' : (event ? 'Update' : 'Create')}
                     </Button>
                 </DialogActions>
             </form>

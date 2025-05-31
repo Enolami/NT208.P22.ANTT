@@ -22,8 +22,35 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../notifications/NotificationPanel';
+import { useTheme } from '@mui/material/styles';
 
 const drawerWidth = 240;
+
+const NavItem = ({ active, icon, label, onClick }) => (
+    <Box
+        onClick={onClick}
+        sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 1.5,
+            borderRadius: 2,
+            cursor: 'pointer',
+            fontWeight: 600,
+            fontFamily: "'Inter', sans-serif",
+            color: active ? '#4361ee' : '#212529',
+            background: active ? '#e9f0ff' : 'transparent',
+            boxShadow: active ? '0 2px 8px #4361ee11' : 'none',
+            transition: 'background 0.18s, color 0.18s',
+            '&:hover': {
+                background: '#f8f9fa',
+                color: '#4361ee'
+            }
+        }}
+    >
+        {icon}
+        <span style={{ marginLeft: 12 }}>{label}</span>
+    </Box>
+);
 
 const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     const { user, logout } = useAuth();
@@ -31,6 +58,7 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     const [darkMode, setDarkMode] = useState(() => {
         return localStorage.getItem('theme') === 'dark';
     });
+    const theme = useTheme();
 
     const handleLogout = () => {
         logout();
@@ -50,69 +78,48 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     };
 
     const drawerContent = (
-        <Box sx={{ overflow: 'auto' }}>
-            <List>
-                <ListItem
-                    button
-                    selected={activeTab === 'tasks'}
-                    onClick={() => { onTabChange('tasks'); if (isMobile) setMobileOpen(false); }}
-                >
-                    <ListItemIcon>
-                        <AssignmentIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Công việc" />
-                </ListItem>
-                <ListItem
-                    button
-                    selected={activeTab === 'calendar'}
-                    onClick={() => { onTabChange('calendar'); if (isMobile) setMobileOpen(false); }}
-                >
-                    <ListItemIcon>
-                        <CalendarTodayIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Lịch" />
-                </ListItem>
-                <ListItem
-                    button
-                    selected={activeTab === 'sync'}
-                    onClick={() => { onTabChange('sync'); if (isMobile) setMobileOpen(false); }}
-                >
-                    <ListItemIcon>
-                        <CalendarTodayIcon color="secondary" />
-                    </ListItemIcon>
-                    <ListItemText primary="Đồng bộ lịch" />
-                </ListItem>
-                <ListItem
-                    button
-                    selected={activeTab === 'ai'}
-                    onClick={() => { onTabChange('ai'); if (isMobile) setMobileOpen(false); }}
-                >
-                    <ListItemIcon>
-                        <SmartToyIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Trợ lý AI" />
-                </ListItem>
-                <ListItem
-                    button
-                    selected={activeTab === 'events'}
-                    onClick={() => { onTabChange('events'); if (isMobile) setMobileOpen(false); }}
-                >
-                    <ListItemIcon>
-                        <CalendarTodayIcon color="secondary" />
-                    </ListItemIcon>
-                    <ListItemText primary="Sự kiện" />
-                </ListItem>
-            </List>
+        <Box sx={{ overflow: 'auto', p: 2, background: '#fff', borderRadius: 3, fontFamily: "'Quicksand', Arial, sans-serif" }}>
+            <NavItem
+                active={activeTab === 'tasks'}
+                icon={<AssignmentIcon sx={{ color: activeTab === 'tasks' ? '#4361ee' : '#b0b0b0' }} />}
+                label="Tasks"
+                onClick={() => { onTabChange('tasks'); if (isMobile) setMobileOpen(false); }}
+            />
+            <NavItem
+                active={activeTab === 'calendar'}
+                icon={<CalendarTodayIcon sx={{ color: activeTab === 'calendar' ? '#4361ee' : '#b0b0b0' }} />}
+                label="Calendar"
+                onClick={() => { onTabChange('calendar'); if (isMobile) setMobileOpen(false); }}
+            />
+            <NavItem
+                active={activeTab === 'sync'}
+                icon={<CalendarTodayIcon color="secondary" sx={{ color: activeTab === 'sync' ? '#06d6a0' : '#b0b0b0' }} />}
+                label="Calendar Sync"
+                onClick={() => { onTabChange('sync'); if (isMobile) setMobileOpen(false); }}
+            />
+            <NavItem
+                active={activeTab === 'ai'}
+                icon={<SmartToyIcon sx={{ color: activeTab === 'ai' ? '#4361ee' : '#b0b0b0' }} />}
+                label="AI Assistant"
+                onClick={() => { onTabChange('ai'); if (isMobile) setMobileOpen(false); }}
+            />
+            <NavItem
+                active={activeTab === 'events'}
+                icon={<CalendarTodayIcon color="secondary" sx={{ color: activeTab === 'events' ? '#06d6a0' : '#b0b0b0' }} />}
+                label="Events"
+                onClick={() => { onTabChange('events'); if (isMobile) setMobileOpen(false); }}
+            />
         </Box>
     );
 
     return (
         <>
             <AppBar position="fixed" sx={{
-                zIndex: (theme) => theme.zIndex.drawer + 1,
+                zIndex: theme.zIndex.drawer + 1,
                 background: darkMode ? '#23272f' : '#4361ee',
                 color: darkMode ? '#f8f9fa' : '#fff',
-                fontFamily: "'Inter', Arial, sans-serif"
+                fontFamily: "'Quicksand', Arial, sans-serif",
+                boxShadow: '0 2px 12px #4361ee11'
             }}>
                 <Toolbar sx={isMobile ? { minHeight: 56, px: 1, display: 'flex', justifyContent: 'space-between' } : {}}>
                     {isMobile ? (
@@ -135,9 +142,9 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     variant="h6"
                                     noWrap
                                     component="div"
-                                    sx={{ textAlign: 'center', width: '100%' }}
+                                    sx={{ textAlign: 'center', width: '100%', fontWeight: 700, letterSpacing: 1, color: darkMode ? '#fff' : '#212529', fontFamily: "'Quicksand', sans-serif" }}
                                 >
-                                    Smart Scheduler
+                                    TaskFlow
                                 </Typography>
                             </Box>
                             {/* Right: Notification + Theme Toggle + Logout */}
@@ -146,36 +153,48 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 <IconButton
                                     color="inherit"
                                     onClick={handleThemeToggle}
-                                    sx={{ ml: 1 }}
+                                    sx={{
+                                        ml: 1,
+                                        background: darkMode ? '#212529' : '#e9f0ff',
+                                        color: darkMode ? '#ffe066' : '#4361ee',
+                                        borderRadius: 2,
+                                        transition: 'background 0.18s'
+                                    }}
                                     title={darkMode ? "Chuyển sang Light Mode" : "Chuyển sang Dark Mode"}
                                 >
                                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
                                 </IconButton>
-                                <Button color="inherit" onClick={handleLogout} sx={{ minWidth: 0, px: 1 }}>
-                                    Đăng xuất
+                                <Button color="inherit" onClick={handleLogout} sx={{ minWidth: 0, px: 1, fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
+                                    Logout
                                 </Button>
                             </Box>
                         </>
                     ) : (
                         <>
-                            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                                Smart Scheduler
+                            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 700, letterSpacing: 1, fontFamily: "'Quicksand', sans-serif" }}>
+                                TaskFlow
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                 <NotificationPanel isMobile={isMobile} />
                                 <IconButton
                                     color="inherit"
                                     onClick={handleThemeToggle}
-                                    sx={{ ml: 1 }}
+                                    sx={{
+                                        ml: 1,
+                                        background: darkMode ? '#212529' : '#e9f0ff',
+                                        color: darkMode ? '#ffe066' : '#4361ee',
+                                        borderRadius: 2,
+                                        transition: 'background 0.18s'
+                                    }}
                                     title={darkMode ? "Chuyển sang Light Mode" : "Chuyển sang Dark Mode"}
                                 >
                                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
                                 </IconButton>
-                                <Typography variant="body1">
-                                    Chào, {user?.email}
+                                <Typography variant="body1" sx={{ color: darkMode ? '#fff' : '#212529', fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
+                                    Hello, {user?.email}
                                 </Typography>
-                                <Button color="inherit" onClick={handleLogout}>
-                                    Đăng xuất
+                                <Button color="inherit" onClick={handleLogout} sx={{ fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
+                                    Logout
                                 </Button>
                             </Box>
                         </>
@@ -192,7 +211,7 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, background: '#fff', borderRadius: 3, boxShadow: '0 2px 12px #4361ee11' },
                     }}
                 >
                     <Toolbar />
@@ -208,6 +227,9 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                         '& .MuiDrawer-paper': {
                             width: drawerWidth,
                             boxSizing: 'border-box',
+                            background: '#fff',
+                            borderRadius: 3,
+                            boxShadow: '0 2px 12px #4361ee11'
                         },
                     }}
                     open

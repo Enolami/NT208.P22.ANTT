@@ -32,7 +32,7 @@ const EventList = () => {
             setEvents(response.data);
             setError(null);
         } catch (err) {
-            setError('Không thể tải danh sách sự kiện.');
+            setError('Unable to load events list.');
         } finally {
             setLoading(false);
         }
@@ -67,7 +67,7 @@ const EventList = () => {
             await eventsAPI.deleteEvent(eventId);
             await fetchEvents();
         } catch (err) {
-            setError('Không thể xóa sự kiện.');
+            setError('Unable to delete event.');
         }
     };
 
@@ -86,10 +86,10 @@ const EventList = () => {
             background: '#fff',
             borderRadius: 3,
             boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
-            fontFamily: "'Inter', Arial, sans-serif"
+            fontFamily: "'Quicksand', Arial, sans-serif"
         }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h5" fontWeight={700}>Sự kiện</Typography>
+                <Typography variant="h5" fontWeight={700}>Events</Typography>
                 <Button
                     variant="contained"
                     sx={{
@@ -106,7 +106,7 @@ const EventList = () => {
                     onClick={() => setShowForm(true)}
                     startIcon={<i className="fa fa-plus" style={{ fontSize: 18 }} />}
                 >
-                    Thêm sự kiện mới
+                    Add New Event
                 </Button>
             </Box>
 
@@ -136,7 +136,7 @@ const EventList = () => {
                     <Box sx={{ textAlign: 'center', mt: 4 }}>
                         <img src="/empty-event.svg" alt="" style={{ width: 64, opacity: 0.7 }} />
                         <Typography variant="body1" sx={{ color: '#b0b0b0', mt: 2, fontWeight: 500 }}>
-                            Chưa có sự kiện nào. <br />Tạo sự kiện đầu tiên của bạn!
+                            No events yet. <br />Create your first event!
                         </Typography>
                     </Box>
                 )}
@@ -160,7 +160,7 @@ const EventList = () => {
                                         {event.start?.dateTime ? dayjs(event.start.dateTime).format('YYYY-MM-DD HH:mm') : ''} - {event.end?.dateTime ? dayjs(event.end.dateTime).format('YYYY-MM-DD HH:mm') : ''}
                                     </Typography>
                                     {event.location && (
-                                        <><br/><Typography component="span" variant="caption" color="text.secondary">Địa điểm: {event.location}</Typography></>
+                                        <><br/><Typography component="span" variant="caption" color="text.secondary">Location: {event.location}</Typography></>
                                     )}
                                 </>}
                             />

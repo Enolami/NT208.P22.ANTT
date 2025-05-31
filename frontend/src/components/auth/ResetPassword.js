@@ -58,70 +58,101 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Đặt lại mật khẩu
-          </h2>
-        </div>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #e9f0ff 0%, #f8f9fa 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      fontFamily: "'Inter', sans-serif"
+    }}>
+      <div style={{
+        maxWidth: 420,
+        width: '100%',
+        margin: '0 auto',
+        background: '#fff',
+        borderRadius: 16,
+        boxShadow: '0 4px 24px #4361ee11',
+        padding: 32
+      }}>
+        <h2 style={{ textAlign: 'center', fontWeight: 700, color: '#4361ee', fontFamily: "'Inter', sans-serif" }}>
+          Đặt lại mật khẩu
+        </h2>
         <Formik
           initialValues={{ password: '', confirmPassword: '' }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
-            <Form className="mt-8 space-y-6">
+            <Form style={{ marginTop: 24 }}>
               {error && (
-                <div className="rounded-md bg-red-50 p-4">
-                  <div className="text-sm text-red-700">{error}</div>
+                <div style={{ background: '#ffe5e5', color: '#e53935', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                  {error}
                 </div>
               )}
               {success && (
-                <div className="rounded-md bg-green-50 p-4">
-                  <div className="text-sm text-green-700">
-                    Đặt lại mật khẩu thành công! Đang chuyển hướng đến đăng nhập...
-                  </div>
+                <div style={{ background: '#e6ffed', color: '#06d6a0', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                  Đặt lại mật khẩu thành công! Đang chuyển hướng đến đăng nhập...
                 </div>
               )}
-              <div className="rounded-md shadow-sm -space-y-px">
-                <div>
-                  <Field
-                    name="password"
-                    type="password"
-                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                    placeholder="Mật khẩu mới"
-                  />
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-                <div>
-                  <Field
-                    name="confirmPassword"
-                    type="password"
-                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                    placeholder="Nhập lại mật khẩu mới"
-                  />
-                  <ErrorMessage
-                    name="confirmPassword"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-              </div>
-
               <div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {isSubmitting ? 'Đang đặt lại...' : 'Đặt lại mật khẩu'}
-                </button>
+                <Field
+                  name="password"
+                  type="password"
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: 8,
+                    border: '1px solid #e0e0e0',
+                    marginBottom: 8,
+                    fontFamily: "'Inter', sans-serif"
+                  }}
+                  placeholder="Mật khẩu mới"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  style={{ color: '#e53935', fontSize: 14, marginBottom: 8 }}
+                />
               </div>
+              <div>
+                <Field
+                  name="confirmPassword"
+                  type="password"
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: 8,
+                    border: '1px solid #e0e0e0',
+                    marginBottom: 8,
+                    fontFamily: "'Inter', sans-serif"
+                  }}
+                  placeholder="Nhập lại mật khẩu mới"
+                />
+                <ErrorMessage
+                  name="confirmPassword"
+                  component="div"
+                  style={{ color: '#e53935', fontSize: 14, marginBottom: 8 }}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                style={{
+                  width: '100%',
+                  padding: '12px 0',
+                  background: '#4361ee',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  fontWeight: 700,
+                  fontFamily: "'Inter', sans-serif",
+                  marginTop: 12,
+                  boxShadow: '0 2px 8px #4361ee22',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isSubmitting ? 'Đang đặt lại...' : 'Đặt lại mật khẩu'}
+              </button>
             </Form>
           )}
         </Formik>
@@ -130,4 +161,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword; 
+export default ResetPassword;

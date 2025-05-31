@@ -43,7 +43,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
             const end = dayjs(formData.end_time);
             const now = dayjs();
             if (formData.status !== 'completed' && end.isBefore(now)) {
-                setError('Thời gian kết thúc không được ở trong quá khứ nếu chưa hoàn thành.');
+                setError('End time cannot be in the past if the task is not completed.');
                 setLoading(false);
                 return;
             }
@@ -72,10 +72,9 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
 
     return (
 
-        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Inter', Arial, sans-serif" } }}>
+        <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Quicksand', Arial, sans-serif" } }}>
             <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>
-
-                {task ? 'Chỉnh sửa công việc' : 'Tạo công việc mới'}
+                {task ? 'Edit Task' : 'Create New Task'}
             </DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
@@ -88,7 +87,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Tên công việc"
+                            label="Task Name"
                             name="task_name"
                             value={formData.task_name}
                             onChange={handleChange}
@@ -96,7 +95,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         />
                         <TextField
                             fullWidth
-                            label="Mô tả"
+                            label="Description"
                             name="description"
                             multiline
                             rows={3}
@@ -108,20 +107,20 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                             required
                             fullWidth
                             select
-                            label="Độ ưu tiên"
+                            label="Priority"
                             name="priority"
                             value={formData.priority}
                             onChange={handleChange}
                             InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         >
-                            <MenuItem value="low">Thấp</MenuItem>
-                            <MenuItem value="medium">Trung bình</MenuItem>
-                            <MenuItem value="high">Cao</MenuItem>
+                            <MenuItem value="low">Low</MenuItem>
+                            <MenuItem value="medium">Medium</MenuItem>
+                            <MenuItem value="high">High</MenuItem>
                         </TextField>
                         <TextField
                             required
                             fullWidth
-                            label="Thời gian bắt đầu"
+                            label="Start Time"
                             name="start_time"
                             type="datetime-local"
                             value={formData.start_time}
@@ -132,7 +131,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Thời gian kết thúc"
+                            label="End Time"
                             name="end_time"
                             type="datetime-local"
                             value={formData.end_time}
@@ -144,32 +143,28 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                             required
                             fullWidth
                             select
-                            label="Trạng thái"
+                            label="Status"
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
                             InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         >
-                            <MenuItem value="pending">Đang chờ</MenuItem>
-                            <MenuItem value="in_progress">Đang thực hiện</MenuItem>
-                            <MenuItem value="completed">Đã hoàn thành</MenuItem>
-                            <MenuItem value="cancelled">Đã hủy</MenuItem>
+                            <MenuItem value="pending">Pending</MenuItem>
+                            <MenuItem value="in_progress">In Progress</MenuItem>
+                            <MenuItem value="completed">Completed</MenuItem>
+                            <MenuItem value="cancelled">Cancelled</MenuItem>
                         </TextField>
                     </Box>
                 </DialogContent>
                 <DialogActions>
-
-                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Hủy</Button>
-
+                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Cancel</Button>
                     <Button
                         type="submit"
                         variant="contained"
                         disabled={loading}
                         sx={{ background: '#3fc8e0', color: '#fff', borderRadius: 2, '&:hover': { background: '#2bb3c0' } }}
                     >
-
-                        {loading ? 'Đang lưu...' : (task ? 'Cập nhật' : 'Tạo mới')}
-
+                        {loading ? 'Saving...' : (task ? 'Update' : 'Create')}
                     </Button>
                 </DialogActions>
             </form>

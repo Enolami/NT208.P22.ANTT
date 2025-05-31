@@ -122,7 +122,7 @@ const AiAssistant = () => {
       console.error('Error in handleSubmit:', error);
       setMessages(prev => [...prev, { 
         type: 'error', 
-        content: 'Xin lỗi, đã xảy ra lỗi khi xử lý yêu cầu của bạn. Vui lòng thử lại.' 
+        content: 'Sorry, an error occurred while processing your request. Please try again.' 
       }]);
     } finally {
       setIsLoading(false);
@@ -136,13 +136,13 @@ const AiAssistant = () => {
       await aiService.updateSchedule(suggestions);
       setMessages(prev => [...prev, { 
         type: 'assistant', 
-        content: 'Lịch trình đã được cập nhật thành công!' 
+        content: 'Schedule updated successfully!' 
       }]);
       setSuggestions(null);
     } catch (error) {
       setMessages(prev => [...prev, { 
         type: 'error', 
-        content: 'Không thể cập nhật lịch trình. Vui lòng thử lại.' 
+        content: 'Unable to update schedule. Please try again.' 
       }]);
     }
   };
@@ -150,7 +150,7 @@ const AiAssistant = () => {
   const handleDeclineSuggestion = () => {
     setMessages(prev => [...prev, { 
       type: 'assistant', 
-      content: 'Lịch trình đã được từ chối. Vui lòng cho tôi biết nếu bạn cần bất kỳ sự trợ giúp nào khác!' 
+      content: 'Schedule changes have been declined. Let me know if you need any further assistance!' 
     }]);
     setSuggestions(null);
   };
@@ -179,19 +179,19 @@ const AiAssistant = () => {
           )}
           {suggestions && (
             <div className="suggestions-container">
-              <div className="suggestions-header">Lịch trình đề xuất</div>
+              <div className="suggestions-header">Proposed Schedule</div>
               <div className="suggestions-actions">
                 <button 
                   className="accept-button"
                   onClick={handleAcceptSuggestion}
                 >
-                  Chấp nhận thay đổi
+                  Accept Changes
                 </button>
                 <button 
                   className="decline-button"
                   onClick={handleDeclineSuggestion}
                 >
-                  Từ chối thay đổi
+                  Decline Changes
                 </button>
               </div>
             </div>
@@ -203,11 +203,11 @@ const AiAssistant = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Hỏi về lịch trình của bạn..."
+            placeholder="Ask about your schedule..."
             disabled={isLoading}
           />
           <button type="submit" disabled={isLoading}>
-            Gửi
+            Send
           </button>
         </form>
       </div>
@@ -215,4 +215,4 @@ const AiAssistant = () => {
   );
 };
 
-export default AiAssistant; 
+export default AiAssistant;

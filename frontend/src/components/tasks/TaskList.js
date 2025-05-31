@@ -125,10 +125,10 @@ const TaskList = () => {
 
     const getStatusLabel = (status) => {
         switch (status) {
-            case 'completed': return 'Đã hoàn thành';
-            case 'cancelled': return 'Đã hủy';
-            case 'pending': return 'Đang chờ';
-            case 'in_progress': return 'Đang thực hiện';
+            case 'completed': return 'Completed';
+            case 'cancelled': return 'Cancelled';
+            case 'pending': return 'Pending';
+            case 'in_progress': return 'In Progress';
             default: return status;
         }
     };
@@ -158,11 +158,11 @@ const TaskList = () => {
             background: '#fff',
             borderRadius: 3,
             boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
-            fontFamily: "'Inter', Arial, sans-serif"
+            fontFamily: "'Quicksand', Arial, sans-serif"
         }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
 
-                <Typography variant="h5" fontWeight={700}>Công việc</Typography>
+                <Typography variant="h5" fontWeight={700}>Tasks</Typography>
                 <Button
                     variant="contained"
                     sx={{
@@ -179,7 +179,7 @@ const TaskList = () => {
                     onClick={() => setShowForm(true)}
                     startIcon={<i className="fa fa-plus" style={{ fontSize: 18 }} />}
                 >
-                    Thêm công việc mới
+                    Add New Task
                 </Button>
 
             </Box>
@@ -211,7 +211,7 @@ const TaskList = () => {
                         <Box sx={{ textAlign: 'center', mt: 4 }}>
                             <img src="/empty-task.svg" alt="" style={{ width: 64, opacity: 0.7 }} />
                             <Typography variant="body1" sx={{ color: '#b0b0b0', mt: 2, fontWeight: 500 }}>
-                                Bạn chưa có công việc nào. <br />Hãy tạo công việc đầu tiên!
+                                You have no tasks yet. <br />Create your first task!
                             </Typography>
                         </Box>
                     ) : (
@@ -289,7 +289,7 @@ const TaskList = () => {
                                             sx={{ mr: 1, color: '#bdbdbd' }}
                                         >
                                             <CheckCircleIcon color="disabled" />
-                                            <Typography variant="caption" ml={0.5}>Đặt lại chờ</Typography>
+                                            <Typography variant="caption" ml={0.5}>Reset to Pending</Typography>
                                         </IconButton>
                                     )}
                                     {(task.status === 'pending' || task.status === 'in_progress') && (
@@ -317,7 +317,7 @@ const TaskList = () => {
                                             sx={{ color: '#3fc8e0' }}
                                         >
                                             <RestoreIcon color="primary" />
-                                            <Typography variant="caption" ml={0.5}>Khôi phục</Typography>
+                                            <Typography variant="caption" ml={0.5}>Restore</Typography>
                                         </IconButton>
                                     )}
                                 </ListItemSecondaryAction>

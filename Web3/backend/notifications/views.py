@@ -43,24 +43,28 @@ def create_task_notifications(request, task_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def create_event_notifications(request, event):
-    """Create notifications for a task"""
-    event = get_object_or_404(Event, id=event.id)
-    remaining_time = event.end_time - timezone.now()
-    if remaining_time.days <=0 :
-        return Response({'error': 'Task is due today or in the past'}, status=400)
-    Notification.objects.create(
-        user_id=request.user.id,
-        notification_type='event',
-        event = event,
-        title=f"Notification for event: {event.title}",
-        message=f"Your event '{event.title}' is due in {remaining_time.days} days",
-        remaining_time=remaining_time,
-        priority = 'medium',
-        status='unread',
-        is_active=True
-    )
-    return Response({'status': 'success'})
+def create_event_notifications(request, event_id):
+    """Create notifications for an event"""
+    try:
+        event = get_object_or_404(Event, id=event_id)
+        remaining_time = event.end_time - timezone.now()
+        if remaining_time.days <= 0:
+            return Response({'error': 'Event is due today or in the past'}, status=400)
+        Notification.objects.create(
+            user_id=request.user.id,
+            notification_type='event',
+            event=event,
+            title=f"Notification for event: {event.title}",
+            message=f"Your event '{event.title}' is due in {remaining_time.days} days",
+            remaining_time=remaining_time,
+            priority='medium',
+            status='unread',
+            is_active=True
+        )
+        return Response({'status': 'success'})
+    except Exception as e:
+        logger.error(f"Error creating notification for event {event_id}: {str(e)}")
+        return Response({'error': str(e)}, status=500)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

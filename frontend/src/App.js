@@ -11,6 +11,7 @@ import Navigation from './components/common/Navigation';
 import CalendarSync from './components/calendar/CalendarSync';
 import EventList from './components/events/EventList';
 import AIAssistant from './components/ai/AIAssistant';
+import { useTheme } from '@mui/material/styles';
 
 // Define the design tokens for light and dark mode
 const getDesignTokens = (mode) => ({
@@ -32,7 +33,7 @@ const getDesignTokens = (mode) => ({
     },
   },
   typography: {
-    fontFamily: "'Inter', Arial, sans-serif",
+    fontFamily: "'Quicksand', Arial, sans-serif",
     h1: { fontSize: '2rem', fontWeight: 700 },
     h2: { fontSize: '1.75rem', fontWeight: 700 },
     h3: { fontSize: '1.5rem', fontWeight: 700 },
@@ -59,6 +60,7 @@ const getDesignTokens = (mode) => ({
 const MainApp = () => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('tasks');
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleTabChange = (newTab) => {
@@ -111,10 +113,10 @@ function App() {
     document.body.setAttribute('data-theme', mode);
   }, [mode]);
 
-  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+  const muiTheme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <Router>
         <AuthProvider>
