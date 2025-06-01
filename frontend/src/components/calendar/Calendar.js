@@ -345,10 +345,10 @@ const Calendar = () => {
             const outlookConnectedStatus = (await api.get('/calendarsync/check-outlook-connection/')).data.connected;
 
             if (googleConnected) {
-                localOnlyTasks.forEach(item => promises.push(pushToCalendar(item, 'google')));
+                localOnlyTasks.forEach (item => promises.push(pushToCalendar(item, 'google')));
             }
             if (outlookConnectedStatus) {
-                localOnlyTasks.forEach(item => promises.push(pushToCalendar(item, 'outlook')));
+                localOnlyTasks.forEach (item => promises.push(pushToCalendar(item, 'outlook')));
             }
 
             await Promise.all(promises);
@@ -453,7 +453,7 @@ const Calendar = () => {
     const getPriorityBg = (priority) => {
         if (priority === 'high') return '#ffd6d6'; // softer red
         if (priority === 'medium') return '#fffbe6'; // soft yellow
-        return '#fff'; // low
+        return '#dcfce7'; // low
     };
     const getStatusLabel = (status) => {
         switch (status) {
@@ -975,69 +975,89 @@ const Calendar = () => {
                             <Box key={day} flex={1} textAlign="center" fontWeight="bold">{day}</Box>
                         ))}
                     </Box>
-                    <Grid container spacing={1}>
-                        {getMonthDays().map((date, idx) => (
-                            <Grid item xs={1.714} key={idx} sx={{ minWidth: 120 }}>
-                                <Paper
-                                    sx={{ p: 1, minHeight: 80, bgcolor: date && date.isSame(dayjs(), 'day') ? '#e3eaff' : '#fff', border: date && date.isSame(dayjs(), 'day') ? '2px solid #5b6ee1' : '1px solid #eee', cursor: date ? 'pointer' : 'default' }}
-                                    onClick={() => date && handleDayClick(date)}
-                                >
-                                    {date && <Typography variant="subtitle2">{date.date()}</Typography>}
-                                    <Box mt={1}>
-                                        {date && getItemsForDay(date).localTasks.slice(0, 2).map(task => (
-                                            <Box key={task.id} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
-                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
-                                                    {task.task_name}
-                                                </Typography>
-                                                <Chip label={getStatusLabel(task.status)} size="small" color={getStatusColor(task.status)} sx={{ ml: 1 }} />
-                                            </Box>
-                                        ))}
-                                        {date && getItemsForDay(date).googleTasks.slice(0, 2).map(task => (
-                                            <Box key={task.id} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
-                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
-                                                    {task.task_name}
-                                                </Typography>
-                                                <Chip label="Google Task" size="small" color="success" sx={{ ml: 1 }} />
-                                            </Box>
-                                        ))}
-                                        {date && getItemsForDay(date).outlookTasks.slice(0, 2).map(task => (
-                                            <Box key={task.id} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
-                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
-                                                    {task.task_name}
-                                                </Typography>
-                                                <Chip label="Outlook Task" size="small" color="info" sx={{ ml: 1 }} />
-                                            </Box>
-                                        ))}
-                                        {date && getItemsForDay(date).googleEvents.slice(0, 2).map(event => (
-                                            <Box key={`event-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
-                                                <Typography variant="body2" fontWeight={500} color="primary.main" noWrap>
-                                                    {event.title} {/* Giữ title cho events */}
-                                                </Typography>
-                                                <Chip label="Google Calendar" size="small" color="primary" sx={{ ml: 1 }} />
-                                            </Box>
-                                        ))}
-                                        {date && getItemsForDay(date).outlookEvents.slice(0, 2).map(event => (
-                                            <Box key={`oevent-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
-                                                <Typography variant="body2" fontWeight={500} color="info.main" noWrap>
-                                                    {event.title} {/* Giữ title cho events */}
-                                                </Typography>
-                                                <Chip label="Outlook Calendar" size="small" color="info" sx={{ ml: 1 }} />
-                                            </Box>
-                                        ))}
-                                        {date && getItemsForDay(date).eventModelEvents.slice(0, 2).map(event => (
-                                            <Box key={`emevent-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
-                                                <Typography variant="body2" fontWeight={500} color="warning.main" noWrap>
-                                                    {event.title} {/* Giữ title cho events */}
-                                                </Typography>
-                                                <Chip label="Event Model" size="small" color="warning" sx={{ ml: 1 }} />
-                                            </Box>
-                                        ))}
-                                        {date && (getItemsForDay(date).localTasks.length + getItemsForDay(date).googleTasks.length + getItemsForDay(date).outlookTasks.length + getItemsForDay(date).googleEvents.length + getItemsForDay(date).outlookEvents.length + getItemsForDay(date).eventModelEvents.length) > 2 && <Typography variant="caption" color="text.secondary">+{(getItemsForDay(date).localTasks.length + getItemsForDay(date).googleTasks.length + getItemsForDay(date).outlookTasks.length + getItemsForDay(date).googleEvents.length + getItemsForDay(date).outlookEvents.length + getItemsForDay(date).eventModelEvents.length) - 2} thêm</Typography>}
-                                    </Box>
-                                </Paper>
-                            </Grid>
+                    <Box display="flex" flexDirection="column" gap={1}>
+                        {Array.from({ length: Math.ceil(getMonthDays().length / 7) }, (_, weekIndex) => (
+                            <Box key={weekIndex} display="flex" minHeight={120}>
+                                {getMonthDays()
+                                    .slice(weekIndex * 7, (weekIndex + 1) * 7)
+                                    .map((date, idx) => (
+                                        <Paper
+                                            key={idx}
+                                            sx={{
+                                                flex: 1,
+                                                mx: 0.5,
+                                                p: 1,
+                                                bgcolor: date?.isSame(dayjs(), 'day') ? '#e3eaff' : '#fff',
+                                                cursor: date ? 'pointer' : 'default',
+                                                minHeight: 100,
+                                                border: date?.isSame(dayjs(), 'day') ? '2px solid #5b6ee1' : '1px solid #eee',
+                                                visibility: date ? 'visible' : 'hidden' // Hide empty cells but maintain spacing
+                                            }}
+                                            onClick={() => date && handleDayClick(date)}
+                                        >
+                                            {date && (
+                                                <>
+                                                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                                                        <Typography variant="subtitle2">{date.date()}</Typography>
+                                                    </Box>
+                                                    <Box mt={1}>
+                                                        {date && getItemsForDay(date).localTasks.slice(0, 2).map(task => (
+                                                            <Box key={task.id} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
+                                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
+                                                                    {task.task_name}
+                                                                </Typography>
+                                                                <Chip label={getStatusLabel(task.status)} size="small" color={getStatusColor(task.status)} sx={{ ml: 1 }} />
+                                                            </Box>
+                                                        ))}
+                                                        {date && getItemsForDay(date).googleTasks.slice(0, 2).map(task => (
+                                                            <Box key={task.id} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
+                                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
+                                                                    {task.task_name}
+                                                                </Typography>
+                                                                <Chip label="Google Task" size="small" color="success" sx={{ ml: 1 }} />
+                                                            </Box>
+                                                        ))}
+                                                        {date && getItemsForDay(date).outlookTasks.slice(0, 2).map(task => (
+                                                            <Box key={task.id} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
+                                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
+                                                                    {task.task_name}
+                                                                </Typography>
+                                                                <Chip label="Outlook Task" size="small" color="info" sx={{ ml: 1 }} />
+                                                            </Box>
+                                                        ))}
+                                                        {date && getItemsForDay(date).googleEvents.slice(0, 2).map(event => (
+                                                            <Box key={`event-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
+                                                                <Typography variant="body2" fontWeight={500} color="primary.main" noWrap>
+                                                                    {event.title} {/* Giữ title cho events */}
+                                                                </Typography>
+                                                                <Chip label="Google Calendar" size="small" color="primary" sx={{ ml: 1 }} />
+                                                            </Box>
+                                                        ))}
+                                                        {date && getItemsForDay(date).outlookEvents.slice(0, 2).map(event => (
+                                                            <Box key={`oevent-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
+                                                                <Typography variant="body2" fontWeight={500} color="info.main" noWrap>
+                                                                    {event.title} {/* Giữ title cho events */}
+                                                                </Typography>
+                                                                <Chip label="Outlook Calendar" size="small" color="info" sx={{ ml: 1 }} />
+                                                            </Box>
+                                                        ))}
+                                                        {date && getItemsForDay(date).eventModelEvents.slice(0, 2).map(event => (
+                                                            <Box key={`emevent-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
+                                                                <Typography variant="body2" fontWeight={500} color="warning.main" noWrap>
+                                                                    {event.title} {/* Giữ title cho events */}
+                                                                </Typography>
+                                                                <Chip label="Event" size="small" color="warning" sx={{ ml: 1 }} />
+                                                            </Box>
+                                                        ))}
+                                                        {date && (getItemsForDay(date).localTasks.length + getItemsForDay(date).googleTasks.length + getItemsForDay(date).outlookTasks.length + getItemsForDay(date).googleEvents.length + getItemsForDay(date).outlookEvents.length + getItemsForDay(date).eventModelEvents.length) > 2 && <Typography variant="caption" color="text.secondary">+{(getItemsForDay(date).localTasks.length + getItemsForDay(date).googleTasks.length + getItemsForDay(date).outlookTasks.length + getItemsForDay(date).googleEvents.length + getItemsForDay(date).outlookEvents.length + getItemsForDay(date).eventModelEvents.length) - 2} thêm</Typography>}
+                                                    </Box>
+                                                </>
+                                            )}
+                                        </Paper>
+                                    ))}
+                            </Box>
                         ))}
-                    </Grid>
+                    </Box>
                 </>
             )}
             {renderDayDialog()}

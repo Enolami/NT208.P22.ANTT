@@ -123,7 +123,7 @@ const TaskList = () => {
     const getPriorityBg = (priority) => {
         if (priority === 'high') return isDark ? '#3c2323' : '#ffd6d6';
         if (priority === 'medium') return isDark ? '#3c3923' : '#fffbe6';
-        return isDark ? '#23263a' : '#fff'; // low
+        return isDark ? '#23263a' : '#dcfce7'; // low
     };
 
     const getStatusLabel = (status) => {
@@ -245,10 +245,10 @@ const TaskList = () => {
                                                 color={getPriorityColor(task.priority)}
                                                 sx={{
                                                     fontWeight: 600,
-                                                    fontSize: '0.95rem',
+                                                    fontSize: '0.85rem',
                                                     borderRadius: 2,
                                                     px: 1.5,
-                                                    background: task.priority === 'high' ? '#ffd6d6' : task.priority === 'medium' ? '#fffbe6' : '#e8f5e9',
+                                                    background: task.priority === 'high' ? '#ffd6d6' : task.priority === 'medium' ? '#fffbe6' : '#dcfce7',
                                                     color: task.priority === 'high' ? '#e53935' : task.priority === 'medium' ? '#fbc02d' : '#388e3c'
                                                 }}
                                             />
