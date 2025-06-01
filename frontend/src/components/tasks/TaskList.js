@@ -22,6 +22,7 @@ import {
 } from '@mui/icons-material';
 import TaskForm from './TaskForm';
 import taskService from '../../services/taskService';
+import { useTheme } from '@mui/material/styles';
 
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
@@ -29,6 +30,8 @@ const TaskList = () => {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     const fetchTasks = async () => {
         try {
@@ -118,9 +121,9 @@ const TaskList = () => {
 
     // Helper for priority background color
     const getPriorityBg = (priority) => {
-        if (priority === 'high') return '#ffd6d6'; 
-        if (priority === 'medium') return '#fffbe6'; 
-        return '#fff'; // low
+        if (priority === 'high') return isDark ? '#3c2323' : '#ffd6d6';
+        if (priority === 'medium') return isDark ? '#3c3923' : '#fffbe6';
+        return isDark ? '#23263a' : '#fff'; // low
     };
 
     const getStatusLabel = (status) => {
@@ -155,14 +158,17 @@ const TaskList = () => {
         <Box p={3} sx={{
             maxWidth: 700,
             margin: '0 auto',
-            background: '#fff',
+            background: isDark ? '#181c2a' : '#fff',
             borderRadius: 3,
-            boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
-            fontFamily: "'Quicksand', Arial, sans-serif"
+            boxShadow: isDark
+                ? '0 2px 16px rgba(60,72,100,0.18)'
+                : '0 2px 16px rgba(60,72,100,0.08)',
+            fontFamily: "'Inter', Arial, sans-serif",
+            color: isDark ? '#e3e6f3' : '#23272f'
         }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
 
-                <Typography variant="h5" fontWeight={700}>Tasks</Typography>
+                <Typography variant="h5" fontWeight={700}>Task</Typography>
                 <Button
                     variant="contained"
                     sx={{
@@ -205,13 +211,16 @@ const TaskList = () => {
                 />
             )}
 
-            <Paper sx={{ boxShadow: '0 2px 8px 0 #3fc8e022' }}>
+            <Paper sx={{
+                boxShadow: isDark ? '0 2px 8px 0 #23263a' : '0 2px 8px 0 #3fc8e022',
+                background: isDark ? '#23263a' : '#fff'
+            }}>
                 <List>
                     {tasks.length === 0 ? (
                         <Box sx={{ textAlign: 'center', mt: 4 }}>
                             <img src="/empty-task.svg" alt="" style={{ width: 64, opacity: 0.7 }} />
                             <Typography variant="body1" sx={{ color: '#b0b0b0', mt: 2, fontWeight: 500 }}>
-                                You have no tasks yet. <br />Create your first task!
+                                Bạn chưa có công việc nào. <br />Hãy tạo công việc đầu tiên!
                             </Typography>
                         </Box>
                     ) : (
@@ -289,7 +298,7 @@ const TaskList = () => {
                                             sx={{ mr: 1, color: '#bdbdbd' }}
                                         >
                                             <CheckCircleIcon color="disabled" />
-                                            <Typography variant="caption" ml={0.5}>Reset to Pending</Typography>
+                                            <Typography variant="caption" ml={0.5}>Đặt lại chờ</Typography>
                                         </IconButton>
                                     )}
                                     {(task.status === 'pending' || task.status === 'in_progress') && (
@@ -317,7 +326,7 @@ const TaskList = () => {
                                             sx={{ color: '#3fc8e0' }}
                                         >
                                             <RestoreIcon color="primary" />
-                                            <Typography variant="caption" ml={0.5}>Restore</Typography>
+                                            <Typography variant="caption" ml={0.5}>Khôi phục</Typography>
                                         </IconButton>
                                     )}
                                 </ListItemSecondaryAction>

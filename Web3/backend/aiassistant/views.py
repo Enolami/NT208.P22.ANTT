@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.core.cache import cache
 from django.http import JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect, csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from .models import AiAssistant
@@ -203,6 +203,10 @@ def get_ai_response(prompt, user_id):
         else:
             return f"Error processing request: {error_message}"
 
+# Ensure the LOGIN_URL is set in settings.py
+if not hasattr(settings, 'LOGIN_URL'):
+    settings.LOGIN_URL = '/login/'  # Default login URL fallback
+
 # Create your views here.
 
 @login_required
@@ -223,7 +227,7 @@ def ai_assistant_list(request):
     return render(request, 'aiassistant/interaction_list.html', {'interactions': interactions})
 
 @login_required
-@csrf_protect
+@csrf_exempt  # Bypass CSRF validation for API requests
 @require_http_methods(["POST"])
 def ai_assistant_create(request):
     # Check rate limiting

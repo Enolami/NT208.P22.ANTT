@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Button, Paper, Divider, Chip, Stack, CircularProgress } from '@mui/material';
 import { Sync as SyncIcon, CloudDone as CloudDoneIcon, CloudOff as CloudOffIcon } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 import api from '../../services/api';
 import googleCalendarManager from '../../services/googleCalendarManager';
 import outlookService from '../../services/outlookService';
@@ -18,6 +19,8 @@ const CalendarSync = () => {
     const [isOutlookConnecting, setIsOutlookConnecting] = useState(false);
     const [lastSyncTime, setLastSyncTime] = useState(null);
     const isSyncingRef = useRef(false);
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     useEffect(() => {
         // Check initial connection status
@@ -183,20 +186,22 @@ const CalendarSync = () => {
 
     return (
         <Box maxWidth={600} mx="auto">
-            <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Poppins,Roboto', color: '#007AFF', fontWeight: 700 }}>
-                Đồng bộ lịch
+            <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Poppins,Roboto', color: isDark ? '#3fc8e0' : '#007AFF', fontWeight: 700 }}>
+                Calendar Sync
             </Typography>
-            <Typography variant="body1" gutterBottom sx={{ color: '#23272f', fontFamily: 'Roboto' }}>
-                Kết nối Google Calendar hoặc Outlook để đồng bộ công việc và sự kiện giữa ứng dụng này và lịch của bạn.
+            <Typography variant="body1" gutterBottom sx={{ color: isDark ? '#e3e6f3' : '#23272f', fontFamily: 'Roboto' }}>
+                Connect Google Calendar or Outlook to sync your tasks and events between this app and your calendar.
             </Typography>
-            <Divider sx={{ my: 3 }} />
+            <Divider sx={{ my: 3, borderColor: isDark ? '#23263a' : undefined }} />
             
             {/* Google Calendar Section */}
             <Paper sx={{
                 p: 3, mb: 3,
                 borderRadius: 3,
-                boxShadow: '0 2px 16px #007aff11',
-                background: 'linear-gradient(120deg, #f2f2f2 0%, #e9f0ff 100%)'
+                boxShadow: isDark ? '0 2px 16px #3fc8e022' : '0 2px 16px #007aff11',
+                background: isDark
+                    ? 'linear-gradient(120deg, #181c2a 0%, #23263a 100%)'
+                    : 'linear-gradient(120deg, #f2f2f2 0%, #e9f0ff 100%)'
             }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" width={32} height={32} />
@@ -276,8 +281,10 @@ const CalendarSync = () => {
             <Paper sx={{
                 p: 3,
                 borderRadius: 3,
-                boxShadow: '0 2px 16px #007aff11',
-                background: 'linear-gradient(120deg, #f2f2f2 0%, #e9f0ff 100%)'
+                boxShadow: isDark ? '0 2px 16px #3fc8e022' : '0 2px 16px #007aff11',
+                background: isDark
+                    ? 'linear-gradient(120deg, #181c2a 0%, #23263a 100%)'
+                    : 'linear-gradient(120deg, #f2f2f2 0%, #e9f0ff 100%)'
             }}>
                 <Stack direction="row" alignItems="center" spacing={2}>
                     <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" width={32} height={32} />

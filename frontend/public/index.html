@@ -33,7 +33,11 @@
         font-size: 16px;
         margin: 0;
         padding: 0;
-        transition: background 0.3s;
+        transition: background 0.3s, color 0.3s;
+      }
+      body[data-theme="dark"] {
+        background: #181c2a !important;
+        color: #e3e6f3 !important;
       }
       h1, h2, h3, .logo-font {
         font-family: 'Poppins', 'Roboto', Arial, sans-serif;
@@ -120,6 +124,19 @@
         border-radius: 50%;
         border: 2px solid #fff;
       }
+      /* Card, Paper, Drawer, etc. */
+      .MuiPaper-root, .card, .drawer, .MuiDrawer-paper {
+        background: #fff;
+        color: #23272f;
+        transition: background 0.3s, color 0.3s;
+      }
+      body[data-theme="dark"] .MuiPaper-root,
+      body[data-theme="dark"] .card,
+      body[data-theme="dark"] .drawer,
+      body[data-theme="dark"] .MuiDrawer-paper {
+        background: #23263a !important;
+        color: #e3e6f3 !important;
+      }
       /* Responsive */
       @media (max-width: 600px) {
         .top-navbar {
@@ -133,7 +150,7 @@
     </style>
   </head>
   <body>
-    <div class="top-navbar">
+    <!-- <div class="top-navbar">
       <div class="logo">
         <img src="%PUBLIC_URL%/logo192.png" alt="Smart Scheduler Logo" />
         <span class="logo-title">Smart Scheduler</span>
@@ -144,7 +161,7 @@
           <span class="notif-dot" id="notifDot" style="display:none"></span>
         </button>
       </div>
-    </div>
+    </div> -->
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
