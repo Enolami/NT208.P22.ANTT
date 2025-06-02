@@ -232,49 +232,97 @@ const TaskList = () => {
                                     bgcolor: getPriorityBg(task.priority),
                                     borderRadius: 2,
                                     mb: 1,
-                                    boxShadow: '0 1px 4px 0 #3fc8e011'
+                                    boxShadow: '0 1px 4px 0 #3fc8e011',
+                                    flexWrap: 'wrap',
+                                    position: 'relative',
+                                    paddingRight: '160px', // Space for action buttons
+                                    minHeight: 'fit-content',
+                                    '& .MuiListItemSecondaryAction-root': {
+                                        right: 8,
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }
                                 }}
                             >
                                 <ListItemText
                                     primary={
-                                        <Box display="flex" alignItems="center" gap={1}>
-                                            {task.task_name}
-                                            <Chip
-                                                label={task.priority}
-                                                size="small"
-                                                color={getPriorityColor(task.priority)}
-                                                sx={{
+                                        <Box 
+                                            display="flex" 
+                                            alignItems="flex-start" 
+                                            gap={1}
+                                            flexWrap="wrap"
+                                            sx={{ width: '100%', wordBreak: 'break-word' }}
+                                        >
+                                            <Typography 
+                                                component="div" 
+                                                sx={{ 
                                                     fontWeight: 600,
-                                                    fontSize: '0.85rem',
-                                                    borderRadius: 2,
-                                                    px: 1.5,
-                                                    background: task.priority === 'high' ? '#ffd6d6' : task.priority === 'medium' ? '#fffbe6' : '#dcfce7',
-                                                    color: task.priority === 'high' ? '#e53935' : task.priority === 'medium' ? '#fbc02d' : '#388e3c'
+                                                    fontSize: '1rem',
+                                                    lineHeight: 1.5,
+                                                    marginBottom: 0.5,
+                                                    wordBreak: 'break-word'
                                                 }}
-                                            />
-                                            <Chip
-                                                label={getStatusLabel(task.status)}
-                                                size="small"
-                                                color={getStatusColor(task.status)}
-                                                sx={{
-                                                    fontWeight: 600,
-                                                    fontSize: '0.95rem',
-                                                    borderRadius: 2,
-                                                    px: 1.5
-                                                }}
-                                            />
+                                            >
+                                                {task.task_name}
+                                            </Typography>
+                                            <Box display="flex" gap={1} flexWrap="wrap">
+                                                <Chip
+                                                    label={task.priority}
+                                                    size="small"
+                                                    color={getPriorityColor(task.priority)}
+                                                    sx={{
+                                                        fontWeight: 600,
+                                                        fontSize: '0.85rem',
+                                                        borderRadius: 2,
+                                                        px: 1.5,
+                                                        background: task.priority === 'high' ? '#ffd6d6' : task.priority === 'medium' ? '#fffbe6' : '#dcfce7',
+                                                        color: task.priority === 'high' ? '#e53935' : task.priority === 'medium' ? '#fbc02d' : '#388e3c'
+                                                    }}
+                                                />
+                                                <Chip
+                                                    label={getStatusLabel(task.status)}
+                                                    size="small"
+                                                    color={getStatusColor(task.status)}
+                                                    sx={{
+                                                        fontWeight: 600,
+                                                        fontSize: '0.85rem',
+                                                        borderRadius: 2,
+                                                        px: 1.5
+                                                    }}
+                                                />
+                                            </Box>
                                         </Box>
                                     }
                                     secondary={
-                                        <>
-                                            <Typography variant="body2" color="textSecondary">
+                                        <Box sx={{ mt: 1 }}>
+                                            <Typography 
+                                                variant="body2" 
+                                                color="textSecondary"
+                                                sx={{ 
+                                                    wordBreak: 'break-word',
+                                                    whiteSpace: 'pre-wrap',
+                                                    marginBottom: 0.5
+                                                }}
+                                            >
                                                 {task.description}
                                             </Typography>
-                                            <Typography variant="caption" color="textSecondary">
+                                            <Typography 
+                                                variant="caption" 
+                                                color="textSecondary"
+                                                display="block"
+                                            >
                                                 {new Date(task.start_time).toLocaleString()} - {new Date(task.end_time).toLocaleString()}
                                             </Typography>
-                                        </>
+                                        </Box>
                                     }
+                                    sx={{
+                                        margin: 0,
+                                        '& .MuiListItemText-primary': {
+                                            marginBottom: 0
+                                        }
+                                    }}
                                 />
                                 <ListItemSecondaryAction>
                                     <IconButton

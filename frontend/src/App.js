@@ -1,7 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CssBaseline, ThemeProvider, createTheme, Toolbar, useMediaQuery } from '@mui/material';
+import React, { useMemo, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Box, CssBaseline, ThemeProvider as MUIThemeProvider, createTheme, Toolbar, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { useThemeContext } from './context/ThemeContext';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -11,7 +13,6 @@ import Navigation from './components/common/Navigation';
 import CalendarSync from './components/calendar/CalendarSync';
 import EventList from './components/events/EventList';
 import AIAssistant from './components/ai/AIAssistant';
-import { useTheme } from '@mui/material/styles';
 
 // Define the design tokens for light and dark mode
 const getDesignTokens = (mode) => ({
@@ -59,8 +60,8 @@ const getDesignTokens = (mode) => ({
 
 const MainApp = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('tasks');
   const theme = useTheme();
+  const [activeTab, setActiveTab] = React.useState('tasks'); // Ensure React.useState is used
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleTabChange = (newTab) => {
@@ -99,42 +100,44 @@ const MainApp = () => {
 };
 
 function App() {
-  const [mode, setMode] = useState(() => localStorage.getItem('theme') || 'light');
+  const { darkMode } = useThemeContext();
+  const muiTheme = useMemo(() => createTheme(getDesignTokens(darkMode ? 'dark' : 'light')), [darkMode]);
 
+  // Set background for body according to theme
   useEffect(() => {
-    const handler = () => {
-      setMode(localStorage.getItem('theme') || 'light');
-    };
-    window.addEventListener('storage', handler);
-    return () => window.removeEventListener('storage', handler);
-  }, []);
-
-  useEffect(() => {
-    document.body.setAttribute('data-theme', mode);
-  }, [mode]);
-
-  const muiTheme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+    document.body.style.background = darkMode
+      ? '#23272f'
+      : '#f8f9fa';
+  }, [darkMode]);
 
   return (
-    <ThemeProvider theme={muiTheme}>
+    <MUIThemeProvider theme={muiTheme}>
       <CssBaseline />
-      <Router>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <MainApp />
-                </ProtectedRoute>
-              }
-          />
-          </Routes>
-        </AuthProvider>
-      </Router>
-    </ThemeProvider>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          background: muiTheme.palette.background.default,
+          transition: 'background 0.3s'
+        }}
+      >
+        <Router>
+          <AuthProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <MainApp />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </AuthProvider>
+        </Router>
+      </Box>
+    </MUIThemeProvider>
   );
 }
 

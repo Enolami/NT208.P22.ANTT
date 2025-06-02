@@ -3,19 +3,12 @@ import {
     AppBar,
     Box,
     Drawer,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
     Toolbar,
     Typography,
-    Button,
-    IconButton
+    IconButton,
+    Button // Import Button
 } from '@mui/material';
 import {
-    Assignment as AssignmentIcon,
-    CalendarToday as CalendarTodayIcon,
-    SmartToy as SmartToyIcon,
     Menu as MenuIcon,
     Brightness4 as Brightness4Icon,
     Brightness7 as Brightness7Icon
@@ -23,43 +16,44 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../notifications/NotificationPanel';
 import { useTheme } from '@mui/material/styles';
+import { useThemeContext } from '../../context/ThemeContext';
 
 const drawerWidth = 240;
 
-const NavItem = ({ active, icon, label, onClick, isDark }) => (
-    <Box
-        onClick={onClick}
-        sx={{
-            display: 'flex',
-            alignItems: 'center',
-            p: 1.5,
-            borderRadius: 2,
-            cursor: 'pointer',
-            fontWeight: 600,
-            fontFamily: "'Inter', sans-serif",
-            color: active ? (isDark ? '#3fc8e0' : '#4361ee') : (isDark ? '#e3e6f3' : '#212529'),
-            background: active ? (isDark ? '#23263a' : '#e9f0ff') : 'transparent',
-            boxShadow: active ? (isDark ? '0 2px 8px #23263a' : '0 2px 8px #4361ee11') : 'none',
-            transition: 'background 0.18s, color 0.18s',
-            '&:hover': {
-                background: isDark ? '#23263a' : '#f8f9fa',
-                color: isDark ? '#3fc8e0' : '#4361ee'
-            }
-        }}
-    >
-        {icon}
-        <span style={{ marginLeft: 12 }}>{label}</span>
-    </Box>
-);
+const NavItem = ({ active, icon, label, onClick }) => {
+    const { darkMode } = useThemeContext();
+    return (
+        <Box
+            onClick={onClick}
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                p: 1.5,
+                borderRadius: 2,
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontFamily: "'Inter', sans-serif",
+                color: active ? (darkMode ? '#3fc8e0' : '#4361ee') : (darkMode ? '#e3e6f3' : '#212529'),
+                background: active ? (darkMode ? '#23263a' : '#e9f0ff') : 'transparent',
+                boxShadow: active ? (darkMode ? '0 2px 8px #23263a' : '0 2px 8px #4361ee11') : 'none',
+                transition: 'background 0.18s, color 0.18s',
+                '&:hover': {
+                    background: darkMode ? '#23263a' : '#f8f9fa',
+                    color: darkMode ? '#3fc8e0' : '#4361ee'
+                }
+            }}
+        >
+            {icon}
+            <span style={{ marginLeft: 12 }}>{label}</span>
+        </Box>
+    );
+};
 
 const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     const { user, logout } = useAuth();
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [darkMode, setDarkMode] = useState(() => {
-        return localStorage.getItem('theme') === 'dark';
-    });
+    const { darkMode, toggleTheme } = useThemeContext();
     const theme = useTheme();
-    const isDark = darkMode || theme.palette.mode === 'dark';
 
     const handleLogout = () => {
         logout();
@@ -69,59 +63,45 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
         setMobileOpen(!mobileOpen);
     };
 
-    const handleThemeToggle = () => {
-        setDarkMode((prev) => {
-            const newMode = !prev;
-            localStorage.setItem('theme', newMode ? 'dark' : 'light');
-            document.body.setAttribute('data-theme', newMode ? 'dark' : 'light');
-            return newMode;
-        });
-    };
-
     const drawerContent = (
         <Box sx={{
             overflow: 'auto',
             p: 2,
-            background: isDark ? '#23263a' : '#fff', // Sáng hơn cho dark mode
+            background: darkMode ? '#23263a' : '#fff',
             borderRadius: 3,
             fontFamily: "'Quicksand', Arial, sans-serif",
-            boxShadow: isDark ? '0 2px 12px #3fc8e044' : '0 2px 12px #4361ee11',
-            border: isDark ? '1.5px solid #3fc8e0' : '1.5px solid #e9f0ff'
+            boxShadow: darkMode ? '0 2px 12px #3fc8e044' : '0 2px 12px #4361ee11',
+            border: darkMode ? '1.5px solid #3fc8e0' : '1.5px solid #e9f0ff'
         }}>
             <NavItem
                 active={activeTab === 'tasks'}
-                icon={<AssignmentIcon sx={{ color: activeTab === 'tasks' ? (isDark ? '#3fc8e0' : '#4361ee') : '#b0b0b0' }} />}
+                icon={<i className="fas fa-tasks"></i>}
                 label="Tasks"
                 onClick={() => { onTabChange('tasks'); if (isMobile) setMobileOpen(false); }}
-                isDark={isDark}
             />
             <NavItem
                 active={activeTab === 'calendar'}
-                icon={<CalendarTodayIcon sx={{ color: activeTab === 'calendar' ? '#4361ee' : '#b0b0b0' }} />}
+                icon={<i className="fas fa-calendar-alt"></i>}
                 label="Calendar"
                 onClick={() => { onTabChange('calendar'); if (isMobile) setMobileOpen(false); }}
-                isDark={isDark}
             />
             <NavItem
                 active={activeTab === 'sync'}
-                icon={<CalendarTodayIcon color="secondary" sx={{ color: activeTab === 'sync' ? '#06d6a0' : '#b0b0b0' }} />}
+                icon={<i className="fas fa-sync"></i>}
                 label="Calendar Sync"
                 onClick={() => { onTabChange('sync'); if (isMobile) setMobileOpen(false); }}
-                isDark={isDark}
             />
             <NavItem
                 active={activeTab === 'ai'}
-                icon={<SmartToyIcon sx={{ color: activeTab === 'ai' ? '#4361ee' : '#b0b0b0' }} />}
+                icon={<i className="fas fa-robot"></i>}  
                 label="AI Assistant"
                 onClick={() => { onTabChange('ai'); if (isMobile) setMobileOpen(false); }}
-                isDark={isDark}
             />
             <NavItem
                 active={activeTab === 'events'}
-                icon={<CalendarTodayIcon color="secondary" sx={{ color: activeTab === 'events' ? '#06d6a0' : '#b0b0b0' }} />}
+                icon={<i className="fas fa-calendar-day"></i>}
                 label="Events"
                 onClick={() => { onTabChange('events'); if (isMobile) setMobileOpen(false); }}
-                isDark={isDark}
             />
         </Box>
     );
@@ -130,10 +110,10 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
         <>
             <AppBar position="fixed" sx={{
                 zIndex: theme.zIndex.drawer + 1,
-                background: isDark ? '#23263a' : '#4361ee',
-                color: isDark ? '#f8f9fa' : '#fff',
+                background: darkMode ? '#23263a' : '#4361ee',
+                color: darkMode ? '#f8f9fa' : '#fff',
                 fontFamily: "'Quicksand', Arial, sans-serif",
-                boxShadow: isDark ? '0 2px 12px #23263a' : '0 2px 12px #4361ee11'
+                boxShadow: darkMode ? '0 2px 12px #23263a' : '0 2px 12px #4361ee11'
             }}>
                 <Toolbar sx={isMobile ? { minHeight: 56, px: 1, display: 'flex', justifyContent: 'space-between' } : {}}>
                     {isMobile ? (
@@ -156,7 +136,7 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     variant="h6"
                                     noWrap
                                     component="div"
-                                    sx={{ textAlign: 'center', width: '100%', fontWeight: 700, letterSpacing: 1, color: isDark ? '#fff' : '#212529', fontFamily: "'Quicksand', sans-serif" }}
+                                    sx={{ textAlign: 'center', width: '100%', fontWeight: 700, letterSpacing: 1, color: darkMode ? '#fff' : '#212529', fontFamily: "'Quicksand', sans-serif" }}
                                 >
                                     Smart Schedule
                                 </Typography>
@@ -166,7 +146,7 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 <NotificationPanel isMobile={isMobile} />
                                 <IconButton
                                     color="inherit"
-                                    onClick={handleThemeToggle}
+                                    onClick={toggleTheme}
                                     sx={{
                                         ml: 1,
                                         background: darkMode ? '#212529' : '#e9f0ff',
@@ -205,7 +185,7 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 <NotificationPanel isMobile={isMobile} />
                                 <IconButton
                                     color="inherit"
-                                    onClick={handleThemeToggle}
+                                    onClick={toggleTheme}
                                     sx={{
                                         ml: 1,
                                         background: darkMode ? '#212529' : '#e9f0ff',
@@ -217,7 +197,7 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 >
                                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
                                 </IconButton>
-                                <Typography variant="body1" sx={{ color: isDark ? '#fff' : '#212529', fontWeight: 600, fontFamily: "'Quicksand', sans-serif", display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography variant="body1" sx={{ color: darkMode ? '#fff' : '#212529', fontWeight: 600, fontFamily: "'Quicksand', sans-serif", display: 'flex', alignItems: 'center', gap: 1 }}>
                                     Hello, <span style={{ fontWeight: 700 }}>{user?.email}</span>
                                 </Typography>
                                 <Button color="inherit" onClick={handleLogout} sx={{ fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
@@ -241,9 +221,9 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                         '& .MuiDrawer-paper': {
                             boxSizing: 'border-box',
                             width: drawerWidth,
-                            background: isDark ? '#181c2a' : '#fff',
+                            background: darkMode ? '#181c2a' : '#fff',
                             borderRadius: 3,
-                            boxShadow: isDark ? '0 2px 12px #23263a' : '0 2px 12px #4361ee11'
+                            boxShadow: darkMode ? '0 2px 12px #23263a' : '0 2px 12px #4361ee11'
                         },
                     }}
                 >
@@ -260,10 +240,10 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                         '& .MuiDrawer-paper': {
                             width: drawerWidth,
                             boxSizing: 'border-box',
-                            background: isDark ? '#23263a' : '#fff', // Sáng hơn cho dark mode
+                            background: darkMode ? '#23263a' : '#fff', // Sáng hơn cho dark mode
                             borderRadius: 3,
-                            boxShadow: isDark ? '0 2px 12px #3fc8e044' : '0 2px 12px #4361ee11',
-                            border: isDark ? '1.5px solid #3fc8e0' : '1.5px solid #e9f0ff'
+                            boxShadow: darkMode ? '0 2px 12px #3fc8e044' : '0 2px 12px #4361ee11',
+                            border: darkMode ? '1.5px solid #3fc8e0' : '1.5px solid #e9f0ff'
                         },
                     }}
                     open
