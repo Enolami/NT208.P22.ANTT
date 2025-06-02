@@ -32,6 +32,9 @@ import taskService from '../../services/taskService'; // Path điều chỉnh th
 import api from '../../services/api'; // Path điều chỉnh thành '../../services/api'
 import outlookService from '../../services/outlookService';
 import { eventsAPI } from '../../services/api';
+import { useTheme } from '@mui/material/styles';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const weekDaysVN = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -39,6 +42,7 @@ dayjs.extend(utc);
 dayjs.extend(isBetween); // Giữ isBetween
 
 const Calendar = () => {
+    const theme = useTheme();
     const [currentWeek, setCurrentWeek] = useState(dayjs().startOf('week'));
     const [showDayDialog, setShowDayDialog] = useState(false);
     const [dayTasks, setDayTasks] = useState([]);
@@ -196,7 +200,7 @@ const Calendar = () => {
 
     const getItemsForDay = (day) => {
         const dayStart = dayjs(day).startOf('day');
-        // const dayEnd = dayjs(day).endOf('day'); // Không cần dayEnd nếu dùng isSame
+        // const dayEnd = dayjs(day).endOf('day'); // Không cần dayEnd nếu dùng isBetween
 
         return { 
             localTasks: tasks.filter(task => 
@@ -449,7 +453,7 @@ const Calendar = () => {
         }
     };
 
-    // Helper for priority color
+    // Helper cho màu nền ưu tiên
     const getPriorityBg = (priority) => {
         if (priority === 'high') return '#ffd6d6'; // softer red
         if (priority === 'medium') return '#fffbe6'; // soft yellow
@@ -644,6 +648,14 @@ const Calendar = () => {
         </Dialog>
     );
 
+    // Helper để lấy màu nền cho các box ngày/tháng
+    const getDayPaperBg = (date) => {
+        if (date && date.isSame && date.isSame(dayjs(), 'day')) {
+            return theme.palette.mode === 'dark' ? '#2b3350' : '#e3eaff';
+        }
+        return theme.palette.background.paper;
+    };
+
     const renderWeekView = () => (
         <>
             <Box display="flex" alignItems="center" mb={1}>
@@ -665,7 +677,18 @@ const Calendar = () => {
                     return (
                         <Paper
                             key={idx}
-                            sx={{ flex: 1, mx: 0.5, p: 1, bgcolor: date.isSame(dayjs(), 'day') ? '#e3eaff' : '#fff', cursor: 'pointer', minHeight: 100, border: date.isSame(dayjs(), 'day') ? '2px solid #5b6ee1' : '1px solid #eee' }}
+                            sx={{
+                                flex: 1,
+                                mx: 0.5,
+                                p: 1,
+                                bgcolor: getDayPaperBg(date),
+                                cursor: 'pointer',
+                                minHeight: 100,
+                                border: date.isSame(dayjs(), 'day')
+                                    ? `2px solid ${theme.palette.primary.main}`
+                                    : `1px solid ${theme.palette.divider}`,
+                                transition: 'background 0.3s, border 0.3s'
+                            }}
                             onClick={() => handleDayClick(date)}
                         >
                             <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -733,14 +756,20 @@ const Calendar = () => {
     );
 
     return (
-        <Box p={3} sx={{
-            maxWidth: 1100,
-            margin: '0 auto',
-            background: '#fff',
-            borderRadius: 3,
-            boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
-            fontFamily: "'Inter', Arial, sans-serif"
-        }}>
+        <Box
+            sx={{
+                maxWidth: 1100,
+                margin: '0 auto',
+                background: theme.palette.background.paper,
+                color: theme.palette.text.primary,
+                borderRadius: 3,
+                boxShadow: theme.palette.mode === 'dark'
+                    ? '0 2px 16px rgba(60,72,100,0.18)'
+                    : '0 2px 16px rgba(60,72,100,0.08)',
+                fontFamily: "'Quicksand', Arial, sans-serif",
+                transition: 'background 0.3s, color 0.3s'
+            }}
+        >
             {lastSyncTime && (
                 <Typography variant="caption" color="text.secondary" mb={2} display="block">
                     Last synced: {lastSyncTime.toLocaleString()}
@@ -762,14 +791,16 @@ const Calendar = () => {
                     exclusive
                     onChange={handleViewChange}
                     aria-label="calendar view mode"
-                    sx={{ // Giữ styles từ bản (1)
-                        background: '#fafdff',
+                    sx={{
+                        background: theme.palette.background.paper,
                         borderRadius: 2,
                         fontWeight: 600,
-                        boxShadow: '0 2px 8px 0 #3fc8e022',
+                        boxShadow: theme.palette.mode === 'dark'
+                            ? '0 2px 8px 0 #23263a'
+                            : '0 2px 8px 0 #3fc8e022',
                         '& .MuiToggleButton-root': {
-                            background: '#fff',
-                            color: '#3fc8e0',
+                            background: theme.palette.background.paper,
+                            color: theme.palette.primary.main,
                             border: 'none',
                             borderRadius: 2,
                             fontWeight: 700,
@@ -777,7 +808,7 @@ const Calendar = () => {
                             px: 3,
                             py: 1.5,
                             '&.Mui-selected': {
-                                background: '#3fc8e0',
+                                background: theme.palette.primary.main,
                                 color: '#fff',
                             }
                         }
@@ -951,7 +982,7 @@ const Calendar = () => {
                                             </Typography>
                                         </>}
                                     />
-                                    <Chip label="Event Model" size="small" color="warning" sx={{ ml: 1 }} />
+                                    <Chip label="Event" size="small" color="warning" sx={{ ml: 1 }} />
                                 </ListItem>
                                 <Divider />
                             </React.Fragment>
@@ -959,16 +990,224 @@ const Calendar = () => {
                     </List>
                 </Box>
             )}
-            {viewMode === 'week' && renderWeekView()}
+            {viewMode === 'week' && (
+                <>
+                    <Box display="flex" alignItems="center" mb={1} gap={2}>
+                        <IconButton
+                            onClick={handlePrevWeek}
+                            sx={{
+                                background: theme.palette.background.paper,
+                                border: `1.5px solid ${theme.palette.divider}`,
+                                color: theme.palette.primary.main,
+                                '&:hover': {
+                                    background: theme.palette.primary.light,
+                                    color: theme.palette.primary.contrastText,
+                                    borderColor: theme.palette.primary.main,
+                                },
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 2px 8px #23263a'
+                                    : '0 2px 8px #3fc8e022',
+                                mr: 1
+                            }}
+                            size="large"
+                        >
+                            <ArrowBackIosNewIcon fontSize="medium" />
+                        </IconButton>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                mx: 2,
+                                fontWeight: 700,
+                                letterSpacing: 1,
+                                color: theme.palette.text.primary,
+                                fontFamily: "'Poppins', 'Roboto', Arial, sans-serif"
+                            }}
+                        >
+                            {currentWeek.format('DD/MM/YYYY')} - {currentWeek.add(6, 'day').format('DD/MM/YYYY')}
+                        </Typography>
+                        <IconButton
+                            onClick={handleNextWeek}
+                            sx={{
+                                background: theme.palette.background.paper,
+                                border: `1.5px solid ${theme.palette.divider}`,
+                                color: theme.palette.primary.main,
+                                '&:hover': {
+                                    background: theme.palette.primary.light,
+                                    color: theme.palette.primary.contrastText,
+                                    borderColor: theme.palette.primary.main,
+                                },
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 2px 8px #23263a'
+                                    : '0 2px 8px #3fc8e022',
+                                ml: 1
+                            }}
+                            size="large"
+                        >
+                            <ArrowForwardIosIcon fontSize="medium" />
+                        </IconButton>
+                    </Box>
+                    <Box display="flex" mb={1}>
+                        {weekDaysVN.map((day, idx) => (
+                            <Box key={day} flex={1} textAlign="center" fontWeight="bold">{day}</Box>
+                        ))}
+                    </Box>
+                    <Box display="flex" minHeight={120}>
+                        {getWeekDays().map((date, idx) => {
+                            const { localTasks, googleTasks, outlookTasks, googleEvents, outlookEvents, eventModelEvents } = getItemsForDay(date);
+                            return (
+                                <Paper
+                                    key={idx}
+                                    sx={{
+                                        flex: 1,
+                                        mx: 0.5,
+                                        p: 1,
+                                        bgcolor: getDayPaperBg(date),
+                                        cursor: 'pointer',
+                                        minHeight: 100,
+                                        border: date.isSame(dayjs(), 'day')
+                                            ? `2px solid ${theme.palette.primary.main}`
+                                            : `1px solid ${theme.palette.divider}`,
+                                        transition: 'background 0.3s, border 0.3s'
+                                    }}
+                                    onClick={() => handleDayClick(date)}
+                                >
+                                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                                        <Typography variant="subtitle2">{date.date()}</Typography>
+                                    </Box>
+                                    <Box mt={1}>
+                                        {localTasks.slice(0, 2).map(task => (
+                                            <Box key={`task-${task.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor={getPriorityBg(task.priority)}>
+                                                <Typography variant="body2" fontWeight={500} color={task.priority === 'high' ? 'error.main' : task.priority === 'medium' ? 'warning.main' : 'success.main'} noWrap>
+                                                    {task.task_name}
+                                                </Typography>
+                                                <Chip label={getStatusLabel(task.status)} size="small" color={getStatusColor(task.status)} sx={{ ml: 1 }} />
+                                            </Box>
+                                        ))}
+                                        {googleTasks.slice(0, 2).map(task => (
+                                            <Box key={`gtask-${task.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e8f5e9">
+                                                <Typography variant="body2" fontWeight={500} color="success.main" noWrap>
+                                                    {task.task_name}
+                                                </Typography>
+                                                <Chip label="Google Task" size="small" color="success" sx={{ ml: 1 }} />
+                                            </Box>
+                                        ))}
+                                        {outlookTasks.slice(0, 2).map(task => (
+                                            <Box key={`otask-${task.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
+                                                <Typography variant="body2" fontWeight={500} color="info.main" noWrap>
+                                                    {task.task_name}
+                                                </Typography>
+                                                <Chip label="Outlook Task" size="small" color="info" sx={{ ml: 1 }} />
+                                            </Box>
+                                        ))}
+                                        {googleEvents.slice(0, 2).map(event => (
+                                            <Box key={`event-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
+                                                <Typography variant="body2" fontWeight={500} color="primary.main" noWrap>
+                                                    {event.title} {/* Giữ title cho events */}
+                                                </Typography>
+                                                <Chip label="Google Calendar" size="small" color="primary" sx={{ ml: 1 }} />
+                                            </Box>
+                                        ))}
+                                        {outlookEvents.slice(0, 2).map(event => (
+                                            <Box key={`oevent-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#e3f2fd">
+                                                <Typography variant="body2" fontWeight={500} color="info.main" noWrap>
+                                                    {event.title} {/* Giữ title cho events */}
+                                                </Typography>
+                                                <Chip label="Outlook Calendar" size="small" color="info" sx={{ ml: 1 }} />
+                                            </Box>
+                                        ))}
+                                        {eventModelEvents.slice(0, 2).map(event => (
+                                            <Box key={`mevent-${event.id}`} mb={0.5} px={1} py={0.5} borderRadius={1} bgcolor="#fff3e0">
+                                                <Typography variant="body2" fontWeight={500} color="warning.main" noWrap>
+                                                    {event.title} {/* Giữ title cho events */}
+                                                </Typography>
+                                                <Chip label="Event" size="small" color="warning" sx={{ ml: 1 }} />
+                                            </Box>
+                                        ))}
+                                        {(localTasks.length + googleTasks.length + outlookTasks.length + googleEvents.length + outlookEvents.length + eventModelEvents.length) > 2 && 
+                                            <Typography variant="caption" color="text.secondary">
+                                                +{(localTasks.length + googleTasks.length + outlookTasks.length + googleEvents.length + outlookEvents.length + eventModelEvents.length) - 2} thêm
+                                            </Typography>}
+                                    </Box>
+                                </Paper>
+                            );
+                        })}
+                    </Box>
+                </>
+            )}
             {viewMode === 'month' && (
                 <>
-                    <Box display="flex" alignItems="center" mb={1}>
-                        <IconButton onClick={handlePrevMonth}>&lt;</IconButton> {/* Thêm icon */}
-                        <Typography variant="h6" sx={{ mx: 2 }}>
+                    <Box display="flex" alignItems="center" mb={1} gap={2}>
+                        <IconButton
+                            onClick={handlePrevMonth}
+                            sx={{
+                                background: theme.palette.background.paper,
+                                border: `1.5px solid ${theme.palette.divider}`,
+                                color: theme.palette.primary.main,
+                                '&:hover': {
+                                    background: theme.palette.primary.light,
+                                    color: theme.palette.primary.contrastText,
+                                    borderColor: theme.palette.primary.main,
+                                },
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 2px 8px #23263a'
+                                    : '0 2px 8px #3fc8e022',
+                                mr: 1
+                            }}
+                            size="large"
+                        >
+                            <ArrowBackIosNewIcon fontSize="medium" />
+                        </IconButton>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                mx: 2,
+                                fontWeight: 700,
+                                letterSpacing: 1,
+                                color: theme.palette.text.primary,
+                                fontFamily: "'Poppins', 'Roboto', Arial, sans-serif"
+                            }}
+                        >
                             {currentMonth.format('MM/YYYY')}
                         </Typography>
-                        <IconButton onClick={handleNextMonth}>&gt;</IconButton> {/* Thêm icon */}
-                        <Button onClick={handleMonthToday} sx={{ ml: 2 }} variant="outlined">Hôm nay</Button>
+                        <IconButton
+                            onClick={handleNextMonth}
+                            sx={{
+                                background: theme.palette.background.paper,
+                                border: `1.5px solid ${theme.palette.divider}`,
+                                color: theme.palette.primary.main,
+                                '&:hover': {
+                                    background: theme.palette.primary.light,
+                                    color: theme.palette.primary.contrastText,
+                                    borderColor: theme.palette.primary.main,
+                                },
+                                boxShadow: theme.palette.mode === 'dark'
+                                    ? '0 2px 8px #23263a'
+                                    : '0 2px 8px #3fc8e022',
+                                ml: 1
+                            }}
+                            size="large"
+                        >
+                            <ArrowForwardIosIcon fontSize="medium" />
+                        </IconButton>
+                        <Button
+                            onClick={handleMonthToday}
+                            sx={{
+                                ml: 2,
+                                background: theme.palette.primary.main,
+                                color: '#fff',
+                                borderRadius: 2,
+                                fontWeight: 700,
+                                fontSize: '1.08rem',
+                                px: 3,
+                                py: 1.5,
+                                boxShadow: '0 2px 8px 0 #3fc8e022',
+                                '&:hover': { background: theme.palette.primary.dark }
+                            }}
+                            startIcon={<i className="fa fa-calendar-day" style={{ fontSize: 18 }} />}
+                            variant="contained"
+                        >
+                            Hôm nay
+                        </Button>
                     </Box>
                     <Box display="flex" mb={1}>
                         {weekDaysVN.map((day, idx) => (
@@ -976,22 +1215,29 @@ const Calendar = () => {
                         ))}
                     </Box>
                     <Box display="flex" flexDirection="column" gap={1}>
-                        {Array.from({ length: Math.ceil(getMonthDays().length / 7) }, (_, weekIndex) => (
-                            <Box key={weekIndex} display="flex" minHeight={120}>
-                                {getMonthDays()
-                                    .slice(weekIndex * 7, (weekIndex + 1) * 7)
-                                    .map((date, idx) => (
+                        {Array.from({ length: Math.ceil(getMonthDays().length / 7) }, (_, weekIndex) => {
+                            // Lấy 7 ngày cho mỗi tuần, nếu thiếu thì thêm null để đủ 7 ô
+                            const weekDays = getMonthDays().slice(weekIndex * 7, (weekIndex + 1) * 7);
+                            const paddedWeek = [...weekDays];
+                            while (paddedWeek.length < 7) paddedWeek.push(null);
+
+                            return (
+                                <Box key={weekIndex} display="flex" minHeight={120}>
+                                    {paddedWeek.map((date, idx) => (
                                         <Paper
                                             key={idx}
                                             sx={{
                                                 flex: 1,
                                                 mx: 0.5,
                                                 p: 1,
-                                                bgcolor: date?.isSame(dayjs(), 'day') ? '#e3eaff' : '#fff',
+                                                bgcolor: getDayPaperBg(date),
                                                 cursor: date ? 'pointer' : 'default',
                                                 minHeight: 100,
-                                                border: date?.isSame(dayjs(), 'day') ? '2px solid #5b6ee1' : '1px solid #eee',
-                                                visibility: date ? 'visible' : 'hidden' // Hide empty cells but maintain spacing
+                                                border: date && date.isSame && date.isSame(dayjs(), 'day')
+                                                    ? `2px solid ${theme.palette.primary.main}`
+                                                    : `1px solid ${theme.palette.divider}`,
+                                                visibility: date ? 'visible' : 'hidden',
+                                                transition: 'background 0.3s, border 0.3s'
                                             }}
                                             onClick={() => date && handleDayClick(date)}
                                         >
@@ -1055,8 +1301,9 @@ const Calendar = () => {
                                             )}
                                         </Paper>
                                     ))}
-                            </Box>
-                        ))}
+                                </Box>
+                            );
+                        })}
                     </Box>
                 </>
             )}

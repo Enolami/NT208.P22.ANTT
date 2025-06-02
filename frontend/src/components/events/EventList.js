@@ -13,6 +13,7 @@ import {
     Divider,
     Chip
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { eventsAPI } from '../../services/api';
 import dayjs from 'dayjs';
@@ -24,6 +25,7 @@ const EventList = () => {
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const theme = useTheme();
 
     const fetchEvents = async () => {
         setLoading(true);
@@ -83,10 +85,14 @@ const EventList = () => {
         <Box p={3} sx={{
             maxWidth: 700,
             margin: '0 auto',
-            background: '#fff',
+            background: theme.palette.background.paper,
+            color: theme.palette.text.primary,
             borderRadius: 3,
-            boxShadow: '0 2px 16px rgba(60,72,100,0.08)',
-            fontFamily: "'Quicksand', Arial, sans-serif"
+            boxShadow: theme.palette.mode === 'dark'
+                ? '0 2px 16px rgba(60,72,100,0.18)'
+                : '0 2px 16px rgba(60,72,100,0.08)',
+            fontFamily: "'Quicksand', Arial, sans-serif",
+            transition: 'background 0.3s, color 0.3s'
         }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Typography variant="h5" fontWeight={700}>Events</Typography>
@@ -146,7 +152,9 @@ const EventList = () => {
                             borderRadius: 2,
                             mb: 1,
                             boxShadow: '0 1px 4px 0 #3fc8e011',
-                            bgcolor: '#fafdff'
+                            bgcolor: theme.palette.mode === 'dark' ? '#23263a' : '#fafdff',
+                            color: theme.palette.text.primary,
+                            transition: 'background 0.3s, color 0.3s'
                         }}>
                             <ListItemText
                                 primary={

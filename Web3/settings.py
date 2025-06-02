@@ -73,4 +73,77 @@ def get_user_data(user_id):
         start_time__lte=timezone.make_aware(datetime.combine(end_date + timedelta(days=1), datetime.min.time()))
     ).order_by('start_time')
     
-    # Get all events within
+    # Get all events within the date range
+    events = Event.objects.filter(
+        user_id=user_id,
+        start_time__gte=timezone.make_aware(datetime.combine(start_date, datetime.min.time())),
+        start_time__lte=timezone.make_aware(datetime.combine(end_date + timedelta(days=1), datetime.min.time()))
+    ).order_by('start_time')
+    
+    return tasks, events
+
+@login_required
+def index(request):
+    user_id = request.user.id
+    
+    # Get cached data
+    cached_data = cache.get(f'user_data_{user_id}')
+    
+    if cached_data:
+        tasks, events = cached_data
+    else:
+        # Get user data
+        tasks, events = get_user_data(user_id)
+        
+        # Cache the data for 10 minutes
+        cache.set(f'user_data_{user_id}', (tasks, events), timeout=600)
+    
+    return render(request, 'index.html', {'tasks': tasks, 'events': events})
+
+@login_required
+def ai_assistant(request):
+    user_id = request.user.id
+    logger.info(f"AI Assistant accessed by user_id: {user_id}")
+    
+    if request.method == 'POST':
+        form = AiAssistantForm(request.POST)
+        if form.is_valid():
+            prompt = form.cleaned_data['prompt']
+            logger.info(f"Prompt received: {prompt}")
+            
+            # Call Gemini API
+            try:
+                response = genai.generate(
+                    model="gemini-1.5-turbo",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=generation_config["temperature"],
+                    max_output_tokens=generation_config["max_output_tokens"],
+                    top_p=generation_config["top_p"],
+                    top_k=generation_config["top_k"],
+                    safety_settings=safety_settings
+                )
+                
+                logger.info(f"Response received: {response}")
+                
+                # Process and return the response
+                answer = response.generations[0].text.strip()
+                return render(request, 'ai_assistant.html', {'form': form, 'answer': answer})
+            
+            except Exception as e:
+                logger.error(f"Error calling Gemini API: {str(e)}")
+                messages.error(request, "Error processing your request. Please try again later.")
+                return render(request, 'ai_assistant.html', {'form': form})
+    
+    else:
+        form = AiAssistantForm()
+    
+    return render(request, 'ai_assistant.html', {'form': form})
+
+def login_view(request):
+    return render(request, 'registration/login.html')
+
+def logout_view(request):
+    return render(request, 'registration/logged_out.html')
+
+# Add this line
+LOGIN_URL = '/login/'
