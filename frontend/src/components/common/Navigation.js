@@ -197,9 +197,10 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 >
                                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
                                 </IconButton>
-                                <Typography variant="body1" sx={{ color: darkMode ? '#fff' : '#212529', fontWeight: 600, fontFamily: "'Quicksand', sans-serif", display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    Hello, <span style={{ fontWeight: 700 }}>{user?.email}</span>
+                               <Typography variant="body1" sx={{ color: darkMode ? '#fff' : '#212529', fontWeight: 600, fontFamily: "'Quicksand', sans-serif", display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    Hello, <span style={{ fontWeight: 700 }}>{user?.lastName || user?.last_name || ''}</span>
                                 </Typography>
+                                
                                 <Button color="inherit" onClick={handleLogout} sx={{ fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
                                     LOGOUT
                                 </Button>
