@@ -6,7 +6,7 @@ import {
     Toolbar,
     Typography,
     IconButton,
-    Button // Import Button
+    Button
 } from '@mui/material';
 import {
     Menu as MenuIcon,
@@ -18,7 +18,7 @@ import NotificationPanel from '../notifications/NotificationPanel';
 import { useTheme } from '@mui/material/styles';
 import { useThemeContext } from '../../context/ThemeContext';
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const NavItem = ({ active, icon, label, onClick }) => {
     const { darkMode } = useThemeContext();
@@ -28,23 +28,31 @@ const NavItem = ({ active, icon, label, onClick }) => {
             sx={{
                 display: 'flex',
                 alignItems: 'center',
-                p: 1.5,
+                p: 2,
                 borderRadius: 2,
                 cursor: 'pointer',
-                fontWeight: 600,
-                fontFamily: "'Inter', sans-serif",
-                color: active ? (darkMode ? '#3fc8e0' : '#4361ee') : (darkMode ? '#e3e6f3' : '#212529'),
-                background: active ? (darkMode ? '#23263a' : '#e9f0ff') : 'transparent',
-                boxShadow: active ? (darkMode ? '0 2px 8px #23263a' : '0 2px 8px #4361ee11') : 'none',
+                fontWeight: 700,
+                fontFamily: "'Quicksand', 'Inter', sans-serif",
+                fontSize: 18,
+                color: active
+                    ? (darkMode ? '#6ee7b7' : '#fff')
+                    : (darkMode ? '#e3e6f3' : '#d1fae5'),
+                background: active
+                    ? (darkMode ? '#166534' : '#22c55e')
+                    : (darkMode ? 'transparent' : 'transparent'),
+                boxShadow: active
+                    ? (darkMode ? '0 2px 8px #166534' : '0 2px 8px #22c55e33')
+                    : 'none',
+                mb: 1.5,
                 transition: 'background 0.18s, color 0.18s',
                 '&:hover': {
-                    background: darkMode ? '#23263a' : '#f8f9fa',
-                    color: darkMode ? '#3fc8e0' : '#4361ee'
+                    background: darkMode ? '#14532d' : '#16a34a',
+                    color: '#fff'
                 }
             }}
         >
-            {icon}
-            <span style={{ marginLeft: 12 }}>{label}</span>
+            <span style={{ fontSize: 22, marginRight: 14 }}>{icon}</span>
+            <span>{label}</span>
         </Box>
     );
 };
@@ -66,41 +74,42 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
     const drawerContent = (
         <Box sx={{
             overflow: 'auto',
-            p: 2,
-            background: darkMode ? '#23263a' : '#fff',
-            borderRadius: 3,
+            p: 3,
+            background: darkMode ? '#1e293b' : '#166534', // #1e293b cho sidebar dark
+            borderRadius: 4,
             fontFamily: "'Quicksand', Arial, sans-serif",
-            boxShadow: darkMode ? '0 2px 12px #3fc8e044' : '0 2px 12px #4361ee11',
-            border: darkMode ? '1.5px solid #3fc8e0' : '1.5px solid #e9f0ff'
+            boxShadow: darkMode ? '0 2px 12px #0f172a88' : '0 2px 12px #22c55e33',
+            border: darkMode ? '2px solid #22c55e' : '2px solid #bbf7d0',
+            minHeight: '100vh'
         }}>
             <NavItem
                 active={activeTab === 'tasks'}
                 icon={<i className="fas fa-tasks"></i>}
-                label="Tasks"
+                label="Công việc"
                 onClick={() => { onTabChange('tasks'); if (isMobile) setMobileOpen(false); }}
             />
             <NavItem
                 active={activeTab === 'calendar'}
                 icon={<i className="fas fa-calendar-alt"></i>}
-                label="Calendar"
+                label="Lịch"
                 onClick={() => { onTabChange('calendar'); if (isMobile) setMobileOpen(false); }}
             />
             <NavItem
                 active={activeTab === 'sync'}
                 icon={<i className="fas fa-sync"></i>}
-                label="Calendar Sync"
+                label="Đồng bộ"
                 onClick={() => { onTabChange('sync'); if (isMobile) setMobileOpen(false); }}
             />
             <NavItem
                 active={activeTab === 'ai'}
-                icon={<i className="fas fa-robot"></i>}  
-                label="AI Assistant"
+                icon={<i className="fas fa-robot"></i>}
+                label="Trợ lý AI"
                 onClick={() => { onTabChange('ai'); if (isMobile) setMobileOpen(false); }}
             />
             <NavItem
                 active={activeTab === 'events'}
                 icon={<i className="fas fa-calendar-day"></i>}
-                label="Events"
+                label="Sự kiện"
                 onClick={() => { onTabChange('events'); if (isMobile) setMobileOpen(false); }}
             />
         </Box>
@@ -108,17 +117,18 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
 
     return (
         <>
-            <AppBar position="fixed" sx={{
+        <AppBar position="fixed" sx={{
                 zIndex: theme.zIndex.drawer + 1,
-                background: darkMode ? '#23263a' : '#4361ee',
-                color: darkMode ? '#f8f9fa' : '#fff',
+                background: darkMode ? '#166534' : '#22c55e',
+                color: '#fff',
                 fontFamily: "'Quicksand', Arial, sans-serif",
-                boxShadow: darkMode ? '0 2px 12px #23263a' : '0 2px 12px #4361ee11'
+                boxShadow: darkMode ? '0 2px 12px #166534' : '0 2px 12px #22c55e33',
+                borderBottomLeftRadius: 24,
+                borderBottomRightRadius: 24
             }}>
                 <Toolbar sx={isMobile ? { minHeight: 56, px: 1, display: 'flex', justifyContent: 'space-between' } : {}}>
                     {isMobile ? (
                         <>
-                            {/* Left: Hamburger */}
                             <Box sx={{ display: 'flex', alignItems: 'center', flex: '0 0 auto' }}>
                                 <IconButton
                                     color="inherit"
@@ -130,18 +140,23 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     <MenuIcon />
                                 </IconButton>
                             </Box>
-                            {/* Center: Title */}
                             <Box sx={{ flex: '1 1 auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <Typography
                                     variant="h6"
                                     noWrap
                                     component="div"
-                                    sx={{ textAlign: 'center', width: '100%', fontWeight: 700, letterSpacing: 1, color: darkMode ? '#fff' : '#212529', fontFamily: "'Quicksand', sans-serif" }}
+                                    sx={{
+                                        textAlign: 'center',
+                                        width: '100%',
+                                        fontWeight: 800,
+                                        letterSpacing: 1,
+                                        color: '#fff',
+                                        fontFamily: "'Quicksand', sans-serif"
+                                    }}
                                 >
-                                    Smart Schedule
+                                    Smart Scheduler
                                 </Typography>
                             </Box>
-                            {/* Right: Notification + Theme Toggle + Logout */}
                             <Box sx={{ display: 'flex', alignItems: 'center', flex: '0 0 auto', gap: 1 }}>
                                 <NotificationPanel isMobile={isMobile} />
                                 <IconButton
@@ -149,8 +164,8 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     onClick={toggleTheme}
                                     sx={{
                                         ml: 1,
-                                        background: darkMode ? '#212529' : '#e9f0ff',
-                                        color: darkMode ? '#ffe066' : '#4361ee',
+                                        background: darkMode ? '#14532d' : '#bbf7d0',
+                                        color: darkMode ? '#bbf7d0' : '#166534',
                                         borderRadius: 2,
                                         transition: 'background 0.18s'
                                     }}
@@ -158,8 +173,20 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 >
                                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
                                 </IconButton>
-                                <Button color="inherit" onClick={handleLogout} sx={{ minWidth: 0, px: 1, fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
-                                    Logout
+                                <Button color="inherit" onClick={handleLogout} sx={{
+                                    minWidth: 0,
+                                    px: 2,
+                                    fontWeight: 700,
+                                    fontFamily: "'Quicksand', sans-serif",
+                                    background: darkMode ? '#22c55e' : '#bbf7d0',
+                                    color: darkMode ? '#1e293b' : '#166534',
+                                    borderRadius: 2,
+                                    '&:hover': {
+                                        background: darkMode ? '#16a34a' : '#6ee7b7',
+                                        color: '#fff'
+                                    }
+                                }}>
+                                    Đăng xuất
                                 </Button>
                             </Box>
                         </>
@@ -170,15 +197,20 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     src="/logo192.png"
                                     alt="TaskFlow Logo"
                                     style={{
-                                        width: 32,
-                                        height: 32,
-                                        borderRadius: 8,
-                                        marginRight: 14,
-                                        boxShadow: '0 2px 8px #fff2'
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: 10,
+                                        marginRight: 18,
+                                        boxShadow: '0 2px 8px #22c55e44'
                                     }}
                                 />
-                                <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700, letterSpacing: 1, fontFamily: "'Quicksand', sans-serif" }}>
-                                    Smart Schedule
+                                <Typography variant="h5" noWrap component="div" sx={{
+                                    fontWeight: 800,
+                                    letterSpacing: 1,
+                                    fontFamily: "'Quicksand', sans-serif",
+                                    color: '#fff'
+                                }}>
+                                    Smart Scheduler
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -188,8 +220,8 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                     onClick={toggleTheme}
                                     sx={{
                                         ml: 1,
-                                        background: darkMode ? '#212529' : '#e9f0ff',
-                                        color: darkMode ? '#ffe066' : '#4361ee',
+                                        background: darkMode ? '#14532d' : '#bbf7d0',
+                                        color: darkMode ? '#bbf7d0' : '#166534',
                                         borderRadius: 2,
                                         transition: 'background 0.18s'
                                     }}
@@ -197,12 +229,31 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                                 >
                                     {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
                                 </IconButton>
-                               <Typography variant="body1" sx={{ color: darkMode ? '#fff' : '#212529', fontWeight: 600, fontFamily: "'Quicksand', sans-serif", display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    Hello, <span style={{ fontWeight: 700 }}>{user?.lastName || user?.last_name || ''}</span>
+                                <Typography variant="body1" sx={{
+                                    color: '#fff',
+                                    fontWeight: 700,
+                                    fontFamily: "'Quicksand', sans-serif",
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1
+                                }}>
+                                    Xin chào, <span style={{ fontWeight: 800 }}>{user?.lastName || user?.last_name || ''}</span>
                                 </Typography>
-                                
-                                <Button color="inherit" onClick={handleLogout} sx={{ fontWeight: 600, fontFamily: "'Quicksand', sans-serif" }}>
-                                    LOGOUT
+                                <Button color="inherit" onClick={handleLogout} sx={{
+                                    fontWeight: 700,
+                                    fontFamily: "'Quicksand', sans-serif",
+                                    background: darkMode ? '#22c55e' : '#bbf7d0',
+                                    color: darkMode ? '#1e293b' : '#166534',
+                                    borderRadius: 2,
+                                    px: 4,
+                                    py: 1.5,
+                                    boxShadow: '0 2px 8px #22c55e33',
+                                    '&:hover': {
+                                        background: darkMode ? '#16a34a' : '#6ee7b7',
+                                        color: '#fff'
+                                    }
+                                }}>
+                                    Đăng xuất
                                 </Button>
                             </Box>
                         </>
@@ -215,16 +266,16 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
                     ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
+                        keepMounted: true,
                     }}
                     sx={{
                         display: { xs: 'block', sm: 'none' },
                         '& .MuiDrawer-paper': {
                             boxSizing: 'border-box',
                             width: drawerWidth,
-                            background: darkMode ? '#181c2a' : '#fff',
-                            borderRadius: 3,
-                            boxShadow: darkMode ? '0 2px 12px #23263a' : '0 2px 12px #4361ee11'
+                            background: darkMode ? '#1e293b' : '#166534', // #1e293b cho sidebar dark
+                            borderRadius: 4,
+                            boxShadow: darkMode ? '0 2px 12px #0f172a88' : '0 2px 12px #22c55e33'
                         },
                     }}
                 >
@@ -239,12 +290,13 @@ const Navigation = ({ activeTab, onTabChange, isMobile }) => {
                         flexShrink: 0,
                         display: { xs: 'none', sm: 'block' },
                         '& .MuiDrawer-paper': {
+                        
                             width: drawerWidth,
                             boxSizing: 'border-box',
-                            background: darkMode ? '#23263a' : '#fff', // Sáng hơn cho dark mode
-                            borderRadius: 3,
-                            boxShadow: darkMode ? '0 2px 12px #3fc8e044' : '0 2px 12px #4361ee11',
-                            border: darkMode ? '1.5px solid #3fc8e0' : '1.5px solid #e9f0ff'
+                            background: darkMode ? '#1e293b' : '#166534', // #1e293b cho sidebar dark
+                            borderRadius: 4,
+                            boxShadow: darkMode ? '0 2px 12px #0f172a88' : '0 2px 12px #22c55e33',
+                            border: darkMode ? '2px solid #22c55e' : '2px solid #bbf7d0'
                         },
                     }}
                     open

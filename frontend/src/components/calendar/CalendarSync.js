@@ -258,7 +258,7 @@ const CalendarSync = () => {
                             onClick={handleConnectGoogle}
                             disabled={isGoogleConnecting}
                             sx={{
-                                background: '#007AFF',
+                                background: '#22c55e',
                                 borderRadius: 2,
                                 fontWeight: 600,
                                 fontFamily: 'Roboto',
@@ -340,7 +340,7 @@ const CalendarSync = () => {
                             onClick={handleConnectOutlook}
                             disabled={isOutlookConnecting}
                             sx={{
-                                background: '#007AFF',
+                                background: '#22c55e',
                                 borderRadius: 2,
                                 fontWeight: 600,
                                 fontFamily: 'Roboto',

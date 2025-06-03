@@ -2,6 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { aiService } from '../../services/aiService';
 import './AIAssistant.css';
 
+const suggestionButtons = [
+  { label: 'Sắp xếp lịch', value: 'Sắp xếp lại lịch trình của tôi' },
+  { label: 'Ưu tiên công việc', value: 'Đề xuất công việc ưu tiên' },
+  { label: 'Tìm khoảng trống', value: 'Tìm khoảng trống trong lịch' },
+];
+
 const AiAssistant = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -15,21 +21,20 @@ const AiAssistant = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isLoading]);
 
   useEffect(() => {
     // Load previous interactions
     const loadInteractions = async () => {
       try {
         const interactions = await aiService.getInteractions();
-        // Reverse the interactions array to show oldest first
         const formattedMessages = interactions.reverse().map(interaction => [
           { type: 'user', content: interaction.request_data },
           { type: 'assistant', content: interaction.ai_response }
         ]).flat();
         setMessages(formattedMessages);
       } catch (error) {
-        console.error('Error loading interactions:', error);
+        // ignore
       }
     };
     loadInteractions();
@@ -49,57 +54,40 @@ const AiAssistant = () => {
       const response = await aiService.createInteraction(userMessage);
 
       let parsedResponse = response.ai_response;
-
-      // Check and parse if it's JSON inside a code block
       if (typeof parsedResponse === 'string') {
         const codeBlockMatch = parsedResponse.match(/```(?:json)?\n([\s\S]*?)```/i);
         if (codeBlockMatch) {
-          parsedResponse = codeBlockMatch[1]; // extract inner JSON string
+          parsedResponse = codeBlockMatch[1];
         }
-
         try {
           parsedResponse = JSON.parse(parsedResponse);
-        } catch (jsonError) {
-          console.error('JSON parsing failed:', jsonError);
-          // If parsing fails, treat the original string as plain text
-          setMessages(prev => [...prev, { 
-            type: 'assistant', 
-            content: response.ai_response 
-          }]);
+        } catch {
+          setMessages(prev => [...prev, { type: 'assistant', content: response.ai_response }]);
           return;
         }
       }
 
-      // Format the response for display
       let formattedResponse = '';
-      
-      // Add analysis
       if (parsedResponse.analysis) {
-        formattedResponse += `📊 Analysis:\n${parsedResponse.analysis}\n\n`;
+        formattedResponse += `📊 Phân tích:\n${parsedResponse.analysis}\n\n`;
       }
-      
-      // Add suggestions if any
       if (parsedResponse.suggestions && parsedResponse.suggestions.length > 0) {
-        formattedResponse += `💡 Suggestions:\n${parsedResponse.suggestions.map((suggestion, index) => 
+        formattedResponse += `💡 Gợi ý:\n${parsedResponse.suggestions.map((suggestion, index) => 
           `${index + 1}. ${suggestion}`
         ).join('\n')}\n\n`;
       }
-      
-      // Add schedule changes if any
       if (parsedResponse.new_schedule) {
-        formattedResponse += `📅 Proposed Schedule Changes:\n`;
+        formattedResponse += `📅 Lịch đề xuất:\n`;
         Object.entries(parsedResponse.new_schedule).forEach(([date, schedule]) => {
-          formattedResponse += `\nDate: ${date}\n`;
-          
+          formattedResponse += `\nNgày: ${date}\n`;
           if (schedule.tasks && schedule.tasks.length > 0) {
-            formattedResponse += '\nTasks:\n';
+            formattedResponse += '\nCông việc:\n';
             schedule.tasks.forEach(task => {
               formattedResponse += `• ${task.name} (${task.start_time} - ${task.end_time})\n`;
             });
           }
-          
           if (schedule.events && schedule.events.length > 0) {
-            formattedResponse += '\nEvents:\n';
+            formattedResponse += '\nSự kiện:\n';
             schedule.events.forEach(event => {
               formattedResponse += `• ${event.title} (${event.start_time} - ${event.end_time})\n`;
             });
@@ -107,22 +95,17 @@ const AiAssistant = () => {
         });
       }
 
-      // Display formatted response
       setMessages(prev => [...prev, { 
         type: 'assistant', 
-        content: formattedResponse.trim()
+        content: formattedResponse.trim() || response.ai_response
       }]);
-
-      // Set suggestions for schedule updates if available
       if (parsedResponse.is_busy && parsedResponse.new_schedule) {
         setSuggestions(parsedResponse.new_schedule);
       }
-
     } catch (error) {
-      console.error('Error in handleSubmit:', error);
       setMessages(prev => [...prev, { 
         type: 'error', 
-        content: 'Sorry, an error occurred while processing your request. Please try again.' 
+        content: 'Xin lỗi, đã xảy ra lỗi. Vui lòng thử lại.' 
       }]);
     } finally {
       setIsLoading(false);
@@ -131,18 +114,17 @@ const AiAssistant = () => {
 
   const handleAcceptSuggestion = async () => {
     if (!suggestions) return;
-
     try {
       await aiService.updateSchedule(suggestions);
       setMessages(prev => [...prev, { 
         type: 'assistant', 
-        content: 'Schedule updated successfully!' 
+        content: 'Lịch trình đã được cập nhật thành công!' 
       }]);
       setSuggestions(null);
-    } catch (error) {
+    } catch {
       setMessages(prev => [...prev, { 
         type: 'error', 
-        content: 'Unable to update schedule. Please try again.' 
+        content: 'Không thể cập nhật lịch trình. Vui lòng thử lại.' 
       }]);
     }
   };
@@ -150,67 +132,271 @@ const AiAssistant = () => {
   const handleDeclineSuggestion = () => {
     setMessages(prev => [...prev, { 
       type: 'assistant', 
-      content: 'Schedule changes have been declined. Let me know if you need any further assistance!' 
+      content: 'Bạn đã từ chối thay đổi lịch trình. Nếu cần trợ giúp thêm, hãy hỏi tôi nhé!' 
     }]);
     setSuggestions(null);
   };
 
   return (
-    <div className="ai-assistant">
-      <div className="chat-container">
-        <div className="messages">
-          {messages.map((message, index) => (
-            <div key={index} className={`message ${message.type}`}>
-              <div className="message-content">
-                {message.content}
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="message assistant">
-              <div className="message-content">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+    <div
+      style={{
+        minHeight: 'calc(100vh - 120px)',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #bbf7d0 100%)',
+        fontFamily: "'Quicksand', 'Inter', sans-serif",
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        padding: '32px 0'
+      }}
+    >
+      <div
+        className="ai-chatgpt-container"
+        style={{
+          width: '100%',
+          maxWidth: 1000, // tăng chiều ngang
+          minHeight: 540,
+          background: '#fff',
+          borderRadius: 24,
+          boxShadow: '0 4px 32px 0 #22c55e22',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          border: '1.5px solid #bbf7d0'
+        }}
+      >
+        <div
+          style={{
+            background: 'linear-gradient(90deg, #22c55e 60%, #bbf7d0 100%)',
+            padding: '18px 32px',
+            fontWeight: 800,
+            fontSize: 22,
+            color: '#fff',
+            letterSpacing: 1,
+            borderBottom: '1.5px solid #bbf7d0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12
+          }}
+        >
+          <span style={{ fontSize: 26 }}>🤖</span>
+          <span>Trợ lý AI</span>
+        </div>
+        <div
+          style={{
+            flex: 1,
+            padding: '28px 18px 16px 18px',
+            overflowY: 'auto',
+            background: '#f8fafc'
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {messages.map((message, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: 'flex',
+                  justifyContent: message.type === 'user' ? 'flex-end' : 'flex-start'
+                }}
+              >
+                <div
+                  style={{
+                    maxWidth: '80%',
+                    borderRadius: 18,
+                    padding: '13px 18px',
+                    fontSize: 16,
+                    fontFamily: "'Quicksand', 'Inter', sans-serif",
+                    fontWeight: 500,
+                    background: message.type === 'user'
+                      ? 'linear-gradient(90deg, #22c55e 60%, #bbf7d0 100%)'
+                      : message.type === 'assistant'
+                        ? '#fff'
+                        : '#fee2e2',
+                    color: message.type === 'user'
+                      ? '#fff'
+                      : message.type === 'assistant'
+                        ? '#166534'
+                        : '#b91c1c',
+                    boxShadow: message.type === 'user'
+                      ? '0 2px 8px #22c55e33'
+                      : message.type === 'assistant'
+                        ? '0 2px 8px #bbf7d033'
+                        : '0 2px 8px #fecaca',
+                    textAlign: 'left',
+                    whiteSpace: 'pre-line',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {message.content}
                 </div>
               </div>
-            </div>
-          )}
-          {suggestions && (
-            <div className="suggestions-container">
-              <div className="suggestions-header">Proposed Schedule</div>
-              <div className="suggestions-actions">
-                <button 
-                  className="accept-button"
-                  onClick={handleAcceptSuggestion}
+            ))}
+            {isLoading && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div
+                  style={{
+                    background: '#fff',
+                    color: '#166534',
+                    borderRadius: 18,
+                    padding: '13px 18px',
+                    fontSize: 16,
+                    fontWeight: 500,
+                    boxShadow: '0 2px 8px #bbf7d033',
+                    display: 'flex',
+                    alignItems: 'center',
+                    minWidth: 60
+                  }}
                 >
-                  Accept Changes
-                </button>
-                <button 
-                  className="decline-button"
-                  onClick={handleDeclineSuggestion}
-                >
-                  Decline Changes
-                </button>
+                  <span className="ai-typing">
+                    <span className="dot" style={{ animationDelay: '0ms' }}>.</span>
+                    <span className="dot" style={{ animationDelay: '120ms' }}>.</span>
+                    <span className="dot" style={{ animationDelay: '240ms' }}>.</span>
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+            )}
+            {suggestions && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                <div style={{ color: '#22c55e', fontWeight: 700, fontSize: 16 }}>Lịch đề xuất</div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: 12,
+                      background: 'linear-gradient(90deg, #22c55e 60%, #bbf7d0 100%)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      border: 'none',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px #22c55e33'
+                    }}
+                    onClick={handleAcceptSuggestion}
+                  >
+                    Chấp nhận
+                  </button>
+                  <button
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: 12,
+                      background: '#f1f5f9',
+                      color: '#166534',
+                      fontWeight: 700,
+                      border: '1.5px solid #bbf7d0',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px #bbf7d033'
+                    }}
+                    onClick={handleDeclineSuggestion}
+                  >
+                    Từ chối
+                  </button>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
-        <form onSubmit={handleSubmit} className="input-form">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about your schedule..."
-            disabled={isLoading}
-          />
-          <button type="submit" disabled={isLoading}>
-            Send
-          </button>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            borderTop: '1.5px solid #bbf7d0',
+            background: '#fff',
+            padding: '16px 18px 12px 18px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10
+          }}
+        >
+          <div style={{ display: 'flex', gap: 10 }}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Nhập yêu cầu của bạn..."
+              disabled={isLoading}
+              style={{
+                flex: 1,
+                padding: '12px 16px',
+                borderRadius: 16,
+                border: '1.5px solid #bbf7d0',
+                fontSize: 16,
+                fontFamily: "'Quicksand', 'Inter', sans-serif",
+                color: '#166534',
+                background: '#f8fafc',
+                outline: 'none',
+                fontWeight: 500,
+                transition: 'border 0.18s'
+              }}
+              autoFocus
+              onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }}
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: '50%',
+                background: 'linear-gradient(90deg, #22c55e 60%, #bbf7d0 100%)',
+                color: '#fff',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: 18,
+                cursor: isLoading || !input.trim() ? 'not-allowed' : 'pointer',
+                boxShadow: '0 2px 8px #22c55e33',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background 0.18s'
+              }}
+              title="Gửi"
+            >
+              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M22 2L11 13" />
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+              </svg>
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 2 }}>
+            {suggestionButtons.map((btn) => (
+              <button
+                key={btn.value}
+                type="button"
+                style={{
+                  padding: '7px 16px',
+                  borderRadius: 12,
+                  background: '#f1f5f9',
+                  color: '#166534',
+                  fontWeight: 600,
+                  fontSize: 15,
+                  border: '1.5px solid #bbf7d0',
+                  cursor: 'pointer',
+                  fontFamily: "'Quicksand', 'Inter', sans-serif",
+                  transition: 'background 0.18s, color 0.18s'
+                }}
+                onClick={() => setInput(btn.value)}
+                tabIndex={-1}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
         </form>
       </div>
+      <style>
+        {`
+        .ai-typing .dot {
+          font-size: 2rem;
+          opacity: 0.7;
+          animation: ai-bounce 1s infinite;
+          display: inline-block;
+        }
+        .ai-typing .dot:nth-child(2) { animation-delay: 0.15s; }
+        .ai-typing .dot:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes ai-bounce {
+          0%, 80%, 100% { transform: scale(1); opacity: 0.7; }
+          40% { transform: scale(1.3); opacity: 1; }
+        }
+        `}
+      </style>
     </div>
   );
 };
