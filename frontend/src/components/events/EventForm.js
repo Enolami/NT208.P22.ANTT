@@ -38,7 +38,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
             const end = dayjs(formData.end);
             const now = dayjs();
             if (end.isBefore(now)) {
-                setError('End time cannot be in the past.');
+                setError('Thời gian kết thúc không hợp lệ.');
                 setLoading(false);
                 return;
             }
@@ -52,7 +52,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
             await onSubmit(payload);
             onCancel();
         } catch (err) {
-            setError('Unable to save event.');
+            setError('Không thể lưu sự kiện.');
         } finally {
             setLoading(false);
         }
@@ -65,7 +65,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
 
     return (
         <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Quicksand', Arial, sans-serif" } }}>
-            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>{event ? 'Edit Event' : 'Create New Event'}</DialogTitle>
+            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>{event ? 'Chỉnh sửa sự kiện' : 'Thêm sự kiện mới'}</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -73,7 +73,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Event Name"
+                            label="Tên sự kiện"
                             name="summary"
                             value={formData.summary}
                             onChange={handleChange}
@@ -81,7 +81,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         />
                         <TextField
                             fullWidth
-                            label="Description"
+                            label="Mô tả"
                             name="description"
                             multiline
                             rows={3}
@@ -91,7 +91,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         />
                         <TextField
                             fullWidth
-                            label="Location"
+                            label="Địa điểm"
                             name="location"
                             value={formData.location}
                             onChange={handleChange}
@@ -100,7 +100,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Start"
+                            label="Thời gian bắt đầu"
                             name="start"
                             type="datetime-local"
                             value={formData.start}
@@ -111,7 +111,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                         <TextField
                             required
                             fullWidth
-                            label="End"
+                            label="Thời gian kết thúc"
                             name="end"
                             type="datetime-local"
                             value={formData.end}
@@ -124,7 +124,7 @@ const EventForm = ({ onSubmit, onCancel, event }) => {
                 <DialogActions>
                     <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Cancel</Button>
                     <Button type="submit" variant="contained" disabled={loading} sx={{ background: '#3fc8e0', color: '#fff', borderRadius: 2, '&:hover': { background: '#2bb3c0' } }}>
-                        {loading ? 'Saving...' : (event ? 'Update' : 'Create')}
+                        {loading ? 'Đang lưu...' : (event ? 'Cập nhật' : 'Tạo mới')}
                     </Button>
                 </DialogActions>
             </form>

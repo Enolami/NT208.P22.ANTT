@@ -45,7 +45,7 @@ const TaskList = () => {
             setError(null);
         } catch (err) {
             console.error('Error fetching tasks:', err);
-            setError(err.response?.data?.message || 'Failed to fetch tasks. Please try again.');
+            setError(err.response?.data?.message || 'Không thể tải công việc. Vui lòng thử lại sau.');
         } finally {
             setLoading(false);
         }
@@ -83,7 +83,7 @@ const TaskList = () => {
             await fetchTasks();
         } catch (err) {
             console.error('Error deleting task:', err);
-            setError('Failed to delete task. Please try again.');
+            setError('Không thể xóa công việc. Vui lòng thử lại sau.');
         }
     };
 
@@ -93,7 +93,7 @@ const TaskList = () => {
             await fetchTasks();
         } catch (err) {
             console.error('Error completing task:', err);
-            setError('Failed to complete task. Please try again.');
+            setError('Không thể hoàn thành công việc. Vui lòng thử lại sau.');
         }
     };
 
@@ -102,7 +102,7 @@ const TaskList = () => {
             await taskService.cancelTask(taskId);
             await fetchTasks();
         } catch (err) {
-            setError('Failed to cancel task. Please try again.');
+            setError('Không thể hủy bỏ công việc. Vui lòng thử lại sau.');
         }
     };
 
@@ -185,7 +185,7 @@ const TaskList = () => {
                     onClick={() => setShowForm(true)}
                     startIcon={<i className="fa fa-plus" style={{ fontSize: 18 }} />}
                 >
-                    Add New Task
+                    Thêm công việc mới
                 </Button>
 
             </Box>

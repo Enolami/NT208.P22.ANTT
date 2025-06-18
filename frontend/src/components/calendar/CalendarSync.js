@@ -11,8 +11,8 @@ const CalendarSync = () => {
     const [outlookConnected, setOutlookConnected] = useState(false);
     const [googleSyncing, setGoogleSyncing] = useState(false);
     const [outlookSyncing, setOutlookSyncing] = useState(false);
-    const [googleStatus, setGoogleStatus] = useState('Not connected');
-    const [outlookStatus, setOutlookStatus] = useState('Not connected');
+    const [googleStatus, setGoogleStatus] = useState('Chưa kết nối');
+    const [outlookStatus, setOutlookStatus] = useState('Chưa kết nối');
     const [googleSyncError, setGoogleSyncError] = useState('');
     const [outlookSyncError, setOutlookSyncError] = useState('');
     const [isGoogleConnecting, setIsGoogleConnecting] = useState(false);
@@ -47,7 +47,7 @@ const CalendarSync = () => {
             try {
                 const response = await outlookService.checkConnection();
                 setOutlookConnected(response.connected);
-                setOutlookStatus(response.connected ? 'Connected' : 'Not connected');
+                setOutlookStatus(response.connected ? 'Đã kết nối' : 'Chưa kết nối');
             } catch (err) {
                 console.error('Error checking Outlook connection:', err);
             }
@@ -58,7 +58,7 @@ const CalendarSync = () => {
     const checkGoogleConnection = async () => {
         const connected = await googleCalendarManager.checkConnection();
         setGoogleConnected(connected);
-        setGoogleStatus(connected ? 'Connected' : 'Not connected');
+        setGoogleStatus(connected ? 'Đã kết nối' : 'Chưa kết nối');
         if (connected) {
             handleSyncGoogle();
         }
@@ -187,10 +187,10 @@ const CalendarSync = () => {
     return (
         <Box maxWidth={600} mx="auto">
             <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Poppins,Roboto', color: isDark ? '#3fc8e0' : '#007AFF', fontWeight: 700 }}>
-                Calendar Sync
+                Đồng bộ lịch
             </Typography>
             <Typography variant="body1" gutterBottom sx={{ color: isDark ? '#e3e6f3' : '#23272f', fontFamily: 'Roboto' }}>
-                Connect Google Calendar or Outlook to sync your tasks and events between this app and your calendar.
+                Kết nối Google Calendar hoặc Outlook để đồng bộ hóa các tác vụ và sự kiện giữa ứng dụng này và lịch của bạn.
             </Typography>
             <Divider sx={{ my: 3, borderColor: isDark ? '#23263a' : undefined }} />
             
@@ -230,7 +230,7 @@ const CalendarSync = () => {
                                 }}
                                 disabled={isOutlookConnecting}
                             >
-                                {isOutlookConnecting ? 'Disconnecting...' : 'Disconnect'}
+                                {isOutlookConnecting ? 'Đang ngắt kết nối...' : 'Ngắt kết nối'}
                             </Button>
                             <Button 
                                 variant="contained" 
@@ -248,7 +248,7 @@ const CalendarSync = () => {
                                 }}
                             >
                                 {googleSyncing ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
-                                {googleSyncing ? 'Syncing...' : 'Sync Now'}
+                                {googleSyncing ? 'Đang đồng bộ...' : 'Đồng bộ ngay'}
                             </Button>
                         </>
                     ) : (
@@ -266,7 +266,7 @@ const CalendarSync = () => {
                                 '&:hover': { background: '#005ecb' }
                             }}
                         >
-                            {isGoogleConnecting ? 'Connecting...' : 'Connect Google Calendar'}
+                            {isGoogleConnecting ? 'Đang kết nối...' : 'Kết nối đến Google Calendar'}
                         </Button>
                     )}
                 </Box>
@@ -313,7 +313,7 @@ const CalendarSync = () => {
                                 }}
                                 disabled={isOutlookConnecting}
                             >
-                                {isOutlookConnecting ? 'Disconnecting...' : 'Disconnect'}
+                                {isOutlookConnecting ? 'Đang ngắt kết nối...' : 'Ngắt kết nối'}
                             </Button>
                             <Button 
                                 variant="contained" 
@@ -330,7 +330,7 @@ const CalendarSync = () => {
                                     '&:hover': { background: '#005ecb' }
                                 }}
                             >
-                                {outlookSyncing ? 'Syncing...' : 'Sync Now'}
+                                {outlookSyncing ? 'Đang đồng bộ...' : 'Đồng bộ ngay'}
                             </Button>
                         </>
                     ) : (
@@ -348,7 +348,7 @@ const CalendarSync = () => {
                                 '&:hover': { background: '#005ecb' }
                             }}
                         >
-                            {isOutlookConnecting ? 'Connecting...' : 'Connect Outlook Calendar'}
+                            {isOutlookConnecting ? 'Đang kết nối...' : 'Kết nối đến Outlook Calendar'}
                         </Button>
                     )}
                 </Box>

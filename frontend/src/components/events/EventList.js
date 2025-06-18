@@ -34,7 +34,7 @@ const EventList = () => {
             setEvents(response.data);
             setError(null);
         } catch (err) {
-            setError('Unable to load events list.');
+            setError('Không thể tải danh sách sự kiện.');
         } finally {
             setLoading(false);
         }
@@ -69,7 +69,7 @@ const EventList = () => {
             await eventsAPI.deleteEvent(eventId);
             await fetchEvents();
         } catch (err) {
-            setError('Unable to delete event.');
+            setError('Không thể xóa sự kiện.');
         }
     };
 
@@ -112,7 +112,7 @@ const EventList = () => {
                     onClick={() => setShowForm(true)}
                     startIcon={<i className="fa fa-plus" style={{ fontSize: 18 }} />}
                 >
-                    Add New Event
+                    Thêm sự kiện mới
                 </Button>
             </Box>
 
@@ -142,7 +142,7 @@ const EventList = () => {
                     <Box sx={{ textAlign: 'center', mt: 4 }}>
                         <img src="/empty-event.svg" alt="" style={{ width: 64, opacity: 0.7 }} />
                         <Typography variant="body1" sx={{ color: '#b0b0b0', mt: 2, fontWeight: 500 }}>
-                            No events yet. <br />Create your first event!
+                            Chưa có sự kiện nào. <br />Hãy tạo sự kiện đầu tiên!
                         </Typography>
                     </Box>
                 )}

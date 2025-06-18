@@ -43,7 +43,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
             const end = dayjs(formData.end_time);
             const now = dayjs();
             if (formData.status !== 'completed' && end.isBefore(now)) {
-                setError('End time cannot be in the past if the task is not completed.');
+                setError('Thời gian kết thúc không hợp lệ.');
                 setLoading(false);
                 return;
             }
@@ -56,7 +56,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
             await onSubmit(payload);
             onCancel();
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to save task. Please try again.');
+            setError(err.response?.data?.message || 'Không thể lưu công việc. Vui lòng thử lại sau.');
         } finally {
             setLoading(false);
         }
@@ -74,7 +74,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
 
         <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3, fontFamily: "'Quicksand', Arial, sans-serif" } }}>
             <DialogTitle sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#3fc8e0' }}>
-                {task ? 'Edit Task' : 'Create New Task'}
+                {task ? 'Chỉnh sửa công việc' : 'Tạo công việc mới'}
             </DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
@@ -87,7 +87,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         <TextField
                             required
                             fullWidth
-                            label="Task Name"
+                            label="Tên công việc"
                             name="task_name"
                             value={formData.task_name}
                             onChange={handleChange}
@@ -95,7 +95,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         />
                         <TextField
                             fullWidth
-                            label="Description"
+                            label="Mô tả"
                             name="description"
                             multiline
                             rows={3}
@@ -107,20 +107,20 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                             required
                             fullWidth
                             select
-                            label="Priority"
+                            label="Độ ưu tiên"
                             name="priority"
                             value={formData.priority}
                             onChange={handleChange}
                             InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         >
-                            <MenuItem value="low">Low</MenuItem>
-                            <MenuItem value="medium">Medium</MenuItem>
-                            <MenuItem value="high">High</MenuItem>
+                            <MenuItem value="low">Thấp</MenuItem>
+                            <MenuItem value="medium">Trung bình</MenuItem>
+                            <MenuItem value="high">Cao</MenuItem>
                         </TextField>
                         <TextField
                             required
                             fullWidth
-                            label="Start Time"
+                            label="Thời gian bắt đầu"
                             name="start_time"
                             type="datetime-local"
                             value={formData.start_time}
@@ -131,7 +131,7 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                         <TextField
                             required
                             fullWidth
-                            label="End Time"
+                            label="Thời gian kết thúc"
                             name="end_time"
                             type="datetime-local"
                             value={formData.end_time}
@@ -143,28 +143,28 @@ const TaskForm = ({ onSubmit, onCancel, task }) => {
                             required
                             fullWidth
                             select
-                            label="Status"
+                            label="Tiến độ"
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
                             InputProps={{ sx: { borderRadius: 2, fontSize: '1.08rem' } }}
                         >
-                            <MenuItem value="pending">Pending</MenuItem>
-                            <MenuItem value="in_progress">In Progress</MenuItem>
-                            <MenuItem value="completed">Completed</MenuItem>
-                            <MenuItem value="cancelled">Cancelled</MenuItem>
+                            <MenuItem value="pending">Chưa giải quyết</MenuItem>
+                            <MenuItem value="in_progress">Đang thực hiện</MenuItem>
+                            <MenuItem value="completed">Đã hoàn thành</MenuItem>
+                            <MenuItem value="cancelled">Đã hủy bỏ</MenuItem>
                         </TextField>
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Cancel</Button>
+                    <Button onClick={onCancel} sx={{ background: '#ede7f6', color: '#3fc8e0', borderRadius: 2, '&:hover': { background: '#d1c4e9' } }}>Hủy bỏ</Button>
                     <Button
                         type="submit"
                         variant="contained"
                         disabled={loading}
                         sx={{ background: '#3fc8e0', color: '#fff', borderRadius: 2, '&:hover': { background: '#2bb3c0' } }}
                     >
-                        {loading ? 'Saving...' : (task ? 'Update' : 'Create')}
+                        {loading ? 'Đang lưu...' : (task ? 'Cập nhật' : 'Tạo mới')}
                     </Button>
                 </DialogActions>
             </form>
