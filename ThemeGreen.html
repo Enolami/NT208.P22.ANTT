@@ -1,0 +1,784 @@
+import React, { useState, useEffect } from 'react';
+
+// Main App component
+function App() {
+  const [activeTab, setActiveTab] = useState('work'); // Default active tab is 'Công việc'
+  const [isDarkMode, setIsDarkMode] = useState(true); // State for dark mode
+
+  // Toggle dark mode function
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  return (
+    <div className={`flex min-h-screen font-inter ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-green-50 text-gray-800'}`}>
+      {/* Sidebar component for navigation */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+      {/* Main content area */}
+      <main className={`flex-1 p-6 rounded-lg shadow-md m-4 ${isDarkMode ? 'bg-slate-800' : 'bg-white'}`}>
+        {renderContent()}
+      </main>
+    </div>
+  );
+
+  // Function to render the content based on the active tab
+  function renderContent() {
+    switch (activeTab) {
+      case 'work':
+        return <WorkTab isDarkMode={isDarkMode} />;
+      case 'calendar':
+        return <CalendarTab isDarkMode={isDarkMode} />;
+      case 'aiAssistant':
+        return <AITab isDarkMode={isDarkMode} />;
+      case 'sync':
+        return <SyncTab isDarkMode={isDarkMode} />;
+      case 'voiceCommand':
+        return <VoiceCommandTab isDarkMode={isDarkMode} />;
+      case 'notifications':
+        return <NotificationsTab isDarkMode={isDarkMode} />;
+      default:
+        return <WorkTab isDarkMode={isDarkMode} />;
+    }
+  }
+}
+
+// Sidebar Component
+function Sidebar({ activeTab, setActiveTab, isDarkMode, toggleDarkMode }) {
+  const tabs = [
+    { id: 'work', name: 'Công việc' },
+    { id: 'calendar', name: 'Lịch' },
+    { id: 'aiAssistant', name: 'Trợ lý AI' },
+    { id: 'sync', name: 'Đồng bộ' },
+    { id: 'voiceCommand', name: 'Ra lệnh giọng nói' },
+    { id: 'notifications', name: 'Thông báo mới' },
+  ];
+
+  return (
+    <aside className={`w-64 p-6 shadow-lg rounded-r-lg ${isDarkMode ? 'bg-slate-800 text-slate-100' : 'bg-green-800 text-white'}`}>
+      <div className="text-center mb-10">
+        <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-300'}`}>Smart Scheduler</h2>
+      </div>
+      <nav>
+        <ul>
+          {tabs.map((tab) => (
+            <li key={tab.id} className="mb-2">
+              <button
+                className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-200 ease-in-out
+                  ${activeTab === tab.id
+                    ? (isDarkMode ? 'bg-green-600 text-white shadow-md' : 'bg-green-600 text-white shadow-md')
+                    : (isDarkMode ? 'hover:bg-slate-700 text-slate-300' : 'hover:bg-green-700 text-green-200')
+                  }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {/* Dark Mode Toggle */}
+      <div className="mt-10 pt-6 border-t border-gray-700 text-center">
+        <button
+          onClick={toggleDarkMode}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+        >
+          {isDarkMode ? '🌞 Light Mode' : '🌙 Dark Mode'}
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+// WorkTab Component (Công việc)
+function WorkTab({ isDarkMode }) {
+  const [tasks, setTasks] = useState([
+    { id: 1, title: 'Hoàn thành báo cáo Q2', dueDate: '2025-06-15', priority: 'Cao', completed: false },
+    { id: 2, title: 'Gọi điện cho khách hàng A', dueDate: '2025-06-03', priority: 'Trung bình', completed: false },
+    { id: 3, title: 'Họp với team marketing', dueDate: '2025-06-05', priority: 'Cao', completed: true },
+  ]);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [filter, setFilter] = useState('all'); // 'all', 'active', 'completed'
+
+  // Function to add a new task
+  const addTask = () => {
+    if (newTaskTitle.trim() === '') return;
+    const newTask = {
+      id: Date.now(), // Unique ID
+      title: newTaskTitle,
+      dueDate: 'Chưa đặt', // Placeholder, should be input by user
+      priority: 'Trung bình', // Placeholder, should be input by user
+      completed: false,
+    };
+    setTasks([...tasks, newTask]);
+    setNewTaskTitle('');
+  };
+
+  // Function to toggle task completion status
+  const toggleTaskCompletion = (id) => {
+    setTasks(tasks.map(task =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
+  // Function to delete a task
+  const deleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id));
+  };
+
+  // Filter tasks based on the selected filter
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'active') return !task.completed;
+    if (filter === 'completed') return task.completed;
+    return true;
+  });
+
+  return (
+    <div className="p-4">
+      <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>Công việc của tôi</h2>
+
+      {/* Input section for adding new tasks */}
+      <div className="flex gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Thêm công việc mới..."
+          value={newTaskTitle}
+          onChange={(e) => setNewTaskTitle(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && addTask()}
+          className={`flex-1 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500
+            ${isDarkMode ? 'bg-slate-700 border-slate-600 text-slate-100 placeholder-slate-400' : 'border border-gray-300 text-gray-800'}`}
+        />
+        <button
+          onClick={addTask}
+          className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors duration-200"
+        >
+          Thêm
+        </button>
+      </div>
+
+      {/* Task filter buttons */}
+      <div className="flex gap-3 mb-6">
+        <button
+          className={`px-4 py-2 rounded-lg transition-colors duration-200
+            ${filter === 'all'
+              ? (isDarkMode ? 'bg-green-500 text-white' : 'bg-green-500 text-white')
+              : (isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+            }`}
+          onClick={() => setFilter('all')}
+        >
+          Tất cả
+        </button>
+        <button
+          className={`px-4 py-2 rounded-lg transition-colors duration-200
+            ${filter === 'active'
+              ? (isDarkMode ? 'bg-green-500 text-white' : 'bg-green-500 text-white')
+              : (isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+            }`}
+          onClick={() => setFilter('active')}
+        >
+          Chưa hoàn thành
+        </button>
+        <button
+          className={`px-4 py-2 rounded-lg transition-colors duration-200
+            ${filter === 'completed'
+              ? (isDarkMode ? 'bg-green-500 text-white' : 'bg-green-500 text-white')
+              : (isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+            }`}
+          onClick={() => setFilter('completed')}
+        >
+          Đã hoàn thành
+        </button>
+      </div>
+
+      {/* Task list display */}
+      <ul className="space-y-4">
+        {filteredTasks.length === 0 ? (
+          <p className={`text-center py-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>Không có công việc nào.</p>
+        ) : (
+          filteredTasks.map((task) => (
+            <li key={task.id} className={`flex items-center p-4 rounded-lg shadow-sm ${task.completed ? 'opacity-70 line-through' : ''}
+              ${isDarkMode ? 'bg-slate-700 border border-slate-600' : 'bg-gray-50'}`}>
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => toggleTaskCompletion(task.id)}
+                className="form-checkbox h-5 w-5 text-green-600 rounded mr-4 cursor-pointer"
+              />
+              <div className="flex-1">
+                <span className={`font-medium text-lg ${isDarkMode ? 'text-slate-100' : 'text-gray-900'}`}>{task.title}</span>
+                <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-500'}`}>Hạn: {task.dueDate}</div>
+              </div>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full
+                ${task.priority === 'Cao' ? 'bg-red-100 text-red-800' :
+                   task.priority === 'Trung bình' ? 'bg-yellow-100 text-yellow-800' :
+                   'bg-green-100 text-green-800'}`}>
+                {task.priority}
+              </span>
+              <button
+                onClick={() => deleteTask(task.id)}
+                className="ml-4 p-2 text-red-500 hover:text-red-700 transition-colors duration-200 rounded-full hover:bg-red-100"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </li>
+          ))
+        )}
+      </ul>
+
+      {/* Task statistics */}
+      <div className={`mt-8 pt-4 border-t ${isDarkMode ? 'border-slate-700' : 'border-gray-200'} ${isDarkMode ? 'text-slate-300' : 'text-gray-600'} text-sm`}>
+        <p>Tổng số công việc: <span className="font-semibold">{tasks.length}</span></p>
+        <p>Đã hoàn thành: <span className="font-semibold">{tasks.filter(task => task.completed).length}</span></p>
+        <p>Sắp tới hạn: <span className="font-semibold">{tasks.filter(task => !task.completed && new Date(task.dueDate) > new Date()).length}</span></p>
+      </div>
+    </div>
+  );
+}
+
+// CalendarTab Component (Lịch)
+function CalendarTab({ isDarkMode }) {
+  const [events, setEvents] = useState([
+    {
+      id: 1,
+      title: 'Họp dự án A',
+      date: '2025-06-02',
+      time: '10:00 - 11:00',
+      type: 'meeting'
+    },
+    {
+      id: 2,
+      title: 'Hoàn thành báo cáo tuần',
+      date: '2025-06-03',
+      time: '09:00 - 17:00',
+      type: 'task'
+    },
+    {
+      id: 3,
+      title: 'Đồng bộ từ Google Calendar',
+      date: '2025-06-05',
+      time: '14:00 - 15:00',
+      type: 'external'
+    },
+  ]);
+
+  return (
+    <div className="p-4">
+      <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>Lịch trình của tôi</h2>
+      <div className="flex gap-3 mb-6">
+        <button className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors">Ngày</button>
+        <button className={`px-4 py-2 rounded-lg transition-colors duration-200 ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>Tuần</button>
+        <button className={`px-4 py-2 rounded-lg transition-colors duration-200 ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>Tháng</button>
+      </div>
+
+      <div className={`p-6 rounded-lg shadow-inner ${isDarkMode ? 'bg-slate-700' : 'bg-gray-50'}`}>
+        <p className={`mb-4 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>
+          Lịch trình chi tiết sẽ được hiển thị ở đây. Để có một lịch tương tác đầy đủ, bạn sẽ cần tích hợp một thư viện lịch như <code className={`font-mono text-sm p-1 rounded ${isDarkMode ? 'bg-slate-600 text-slate-200' : 'bg-gray-200'}`}>react-big-calendar</code> hoặc <code className={`font-mono text-sm p-1 rounded ${isDarkMode ? 'bg-slate-600 text-slate-200' : 'bg-gray-200'}`}>fullcalendar</code>.
+        </p>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Các sự kiện mẫu:</h3>
+        <ul className="space-y-3">
+          {events.map(event => (
+            <li key={event.id} className={`p-3 rounded-md shadow-sm ${isDarkMode ? 'bg-slate-800 border border-slate-700' : 'bg-white border border-gray-200'}`}>
+              <strong className={`block ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>{event.title}</strong>
+              <span className={`block text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>{event.date} - {event.time}</span>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full mt-1 inline-block
+                ${event.type === 'meeting' ? 'bg-green-100 text-green-800' :
+                   event.type === 'task' ? 'bg-blue-100 text-blue-800' :
+                   'bg-yellow-100 text-yellow-800'}`}>
+                {event.type.toUpperCase()}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <button className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors duration-200">
+          Thêm sự kiện mới
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// AITab Component (Trợ lý AI)
+function AITab({ isDarkMode }) {
+  const [messages, setMessages] = useState([
+    { sender: 'AI', text: 'Chào bạn! Tôi có thể giúp gì cho lịch trình của bạn hôm nay?' },
+  ]);
+  const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Function to send a message to the AI
+  const sendMessage = async () => {
+    if (inputText.trim() === '') return;
+
+    const userMessage = { sender: 'user', text: inputText };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setInputText('');
+    setIsLoading(true);
+
+    // Simulate AI response (replace with actual API call)
+    setTimeout(() => {
+      const aiResponse = `Tôi đã nhận được yêu cầu của bạn: "${inputText}". Hiện tại, tôi đang xử lý...`;
+      setMessages((prevMessages) => [...prevMessages, { sender: 'AI', text: aiResponse }]);
+      setIsLoading(false);
+    }, 1500); // Simulate network delay
+  };
+
+  return (
+    <div className="p-4 flex flex-col h-full">
+      <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>Trợ lý AI</h2>
+      <div className={`flex-1 p-4 rounded-lg shadow-inner overflow-y-auto mb-4 ${isDarkMode ? 'bg-slate-700' : 'bg-gray-50'}`}>
+        {messages.map((msg, index) => (
+          <div key={index} className={`mb-3 p-3 rounded-lg max-w-[80%] ${msg.sender === 'user'
+            ? (isDarkMode ? 'bg-green-700 text-slate-100 ml-auto' : 'bg-green-100 text-green-800 ml-auto')
+            : (isDarkMode ? 'bg-slate-600 text-slate-100 mr-auto' : 'bg-gray-200 text-gray-800 mr-auto')
+          }`}>
+            <span className="font-semibold">{msg.sender === 'user' ? 'Bạn' : 'AI'}:</span> {msg.text}
+          </div>
+        ))}
+        {isLoading && (
+          <div className={`mb-3 p-3 rounded-lg max-w-[80%] mr-auto animate-pulse ${isDarkMode ? 'bg-slate-600 text-slate-100' : 'bg-gray-200 text-gray-800'}`}>
+            AI đang suy nghĩ...
+          </div>
+        )}
+      </div>
+      <div className="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Nhập yêu cầu của bạn..."
+          value={inputText}
+          onChange={(e) => setNewInputText(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          disabled={isLoading}
+          className={`flex-1 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500
+            ${isDarkMode ? 'bg-slate-700 border-slate-600 text-slate-100 placeholder-slate-400' : 'border border-gray-300 text-gray-800'}`}
+        />
+        <button
+          onClick={sendMessage}
+          disabled={isLoading}
+          className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Gửi
+        </button>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <button
+          onClick={() => setNewInputText('Sắp xếp lại lịch trình của tôi')}
+          className={`px-4 py-2 rounded-lg transition-colors ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+        >
+          Sắp xếp lịch
+        </button>
+        <button
+          onClick={() => setNewInputText('Đề xuất công việc ưu tiên')}
+          className={`px-4 py-2 rounded-lg transition-colors ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+        >
+          Ưu tiên công việc
+        </button>
+        <button
+          onClick={() => setNewInputText('Tìm khoảng trống trong lịch')}
+          className={`px-4 py-2 rounded-lg transition-colors ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+        >
+          Tìm khoảng trống
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// SyncTab Component (Đồng bộ)
+function SyncTab({ isDarkMode }) {
+  const [googleConnected, setGoogleConnected] = useState(false);
+  const [outlookConnected, setOutlookConnected] = useState(false);
+  const [syncDirection, setSyncDirection] = useState('two-way'); // 'two-way', 'app-to-external', 'external-to-app'
+
+  // Function to simulate connecting to Google Calendar
+  const connectGoogle = () => {
+    console.log('Đang kết nối với Google Calendar...');
+    setTimeout(() => {
+      setGoogleConnected(true);
+      console.log('Kết nối Google Calendar thành công!');
+    }, 1000);
+  };
+
+  // Function to simulate disconnecting from Google Calendar
+  const disconnectGoogle = () => {
+    setGoogleConnected(false);
+    console.log('Đã ngắt kết nối Google Calendar.');
+  };
+
+  // Function to simulate connecting to Outlook Calendar
+  const connectOutlook = () => {
+    console.log('Đang kết nối với Outlook Calendar...');
+    setTimeout(() => {
+      setOutlookConnected(true);
+      console.log('Kết nối Outlook Calendar thành công!');
+    }, 1000);
+  };
+
+  // Function to simulate disconnecting from Outlook Calendar
+  const disconnectOutlook = () => {
+    setOutlookConnected(false);
+    console.log('Đã ngắt kết nối Outlook Calendar.');
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>Thiết lập đồng bộ</h2>
+
+      {/* Google Calendar Sync Section */}
+      <div className={`p-6 rounded-lg shadow-sm mb-6 border ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-200'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Google Calendar</h3>
+        {googleConnected ? (
+          <div className="flex items-center gap-4">
+            <span className="h-3 w-3 bg-green-500 rounded-full"></span>
+            <span className="text-green-500 font-medium">Đã kết nối</span>
+            <button
+              onClick={disconnectGoogle}
+              className="ml-auto px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors"
+            >
+              Ngắt kết nối
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={connectGoogle}
+            className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors"
+          >
+            Kết nối Google Calendar
+          </button>
+        )}
+        {googleConnected && (
+          <div className="mt-4">
+            <h4 className={`text-lg font-medium mb-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>Tùy chọn đồng bộ:</h4>
+            <label className={`flex items-center ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>
+              <input type="checkbox" checked={true} readOnly className="form-checkbox h-4 w-4 text-green-600 rounded mr-2" />
+              Đồng bộ lịch chính của tôi
+            </label>
+            {/* Add more checkboxes for specific calendars if needed */}
+          </div>
+        )}
+      </div>
+
+      {/* Outlook Calendar Sync Section */}
+      <div className={`p-6 rounded-lg shadow-sm mb-6 border ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-200'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Outlook Calendar</h3>
+        {outlookConnected ? (
+          <div className="flex items-center gap-4">
+            <span className="h-3 w-3 bg-green-500 rounded-full"></span>
+            <span className="text-green-500 font-medium">Đã kết nối</span>
+            <button
+              onClick={disconnectOutlook}
+              className="ml-auto px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors"
+            >
+              Ngắt kết nối
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={connectOutlook}
+            className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors"
+          >
+            Kết nối Outlook Calendar
+          </button>
+        )}
+        {outlookConnected && (
+          <div className="mt-4">
+            <h4 className={`text-lg font-medium mb-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>Tùy chọn đồng bộ:</h4>
+            <label className={`flex items-center ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>
+              <input type="checkbox" checked={true} readOnly className="form-checkbox h-4 w-4 text-green-600 rounded mr-2" />
+              Đồng bộ lịch chính của tôi
+            </label>
+          </div>
+        )}
+      </div>
+
+      {/* Global Sync Direction Section */}
+      <div className={`p-6 rounded-lg shadow-sm border ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-200'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Hướng đồng bộ chung:</h3>
+        <div className="space-y-3">
+          <label className={`flex items-center ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>
+            <input
+              type="radio"
+              value="two-way"
+              checked={syncDirection === 'two-way'}
+              onChange={(e) => setSyncDirection(e.target.value)}
+              className="form-radio h-4 w-4 text-green-600"
+            />
+            <span className="ml-2">Hai chiều (ứng dụng &lt;-&gt; bên ngoài)</span>
+          </label>
+          <label className={`flex items-center ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>
+            <input
+              type="radio"
+              value="app-to-external"
+              checked={syncDirection === 'app-to-external'}
+              onChange={(e) => setSyncDirection(e.target.value)}
+              className="form-radio h-4 w-4 text-green-600"
+            />
+            <span className="ml-2">Từ ứng dụng ra bên ngoài</span>
+          </label>
+          <label className={`flex items-center ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>
+            <input
+              type="radio"
+              value="external-to-app"
+              checked={syncDirection === 'external-to-app'}
+              onChange={(e) => setSyncDirection(e.target.value)}
+              className="form-radio h-4 w-4 text-green-600"
+            />
+            <span className="ml-2">Từ bên ngoài vào ứng dụng</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Sync History Section */}
+      <div className={`mt-6 p-6 rounded-lg shadow-sm border ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-200'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Lịch sử đồng bộ gần đây</h3>
+        <ul className={`list-disc list-inside space-y-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+          <li>Đồng bộ Google Calendar: <span className="text-green-500 font-medium">Thành công</span> (5 phút trước)</li>
+          <li>Đồng bộ Outlook Calendar: <span className="text-red-500 font-medium">Lỗi</span> (Ngày hôm qua)</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+// VoiceCommandTab Component (Ra lệnh bằng giọng nói)
+function VoiceCommandTab({ isDarkMode }) {
+  const [isListening, setIsListening] = useState(false);
+  const [recognizedText, setRecognizedText] = useState('');
+  const [commandResponse, setCommandResponse] = useState('');
+
+  // Initialize Web Speech Recognition API
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+  useEffect(() => {
+    if (!recognition) {
+      setCommandResponse('Trình duyệt của bạn không hỗ trợ Web Speech API.');
+      return;
+    }
+
+    recognition.continuous = false; // Stop listening after a single utterance
+    recognition.interimResults = false; // Only return final results
+    recognition.lang = 'vi-VN'; // Vietnamese language
+
+    // Event handler for when speech is recognized
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setRecognizedText(transcript);
+      processVoiceCommand(transcript); // Process the recognized command
+    };
+
+    // Event handler for when speech recognition ends
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    // Event handler for speech recognition errors
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setCommandResponse(`Lỗi nhận diện giọng nói: ${event.error}`);
+      setIsListening(false);
+    };
+
+    // Cleanup function for when the component unmounts
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, [recognition]); // Dependency array includes recognition to re-initialize if it changes
+
+  // Function to start listening
+  const startListening = () => {
+    if (recognition) {
+      setRecognizedText('');
+      setCommandResponse('');
+      setIsListening(true);
+      recognition.start();
+    } else {
+      setCommandResponse('Không thể khởi động nhận diện giọng nói.');
+    }
+  };
+
+  // Function to stop listening
+  const stopListening = () => {
+    if (recognition) {
+      recognition.stop();
+      setIsListening(false);
+    }
+  };
+
+  // Function to process the voice command (mock logic)
+  const processVoiceCommand = (command) => {
+    setCommandResponse(`Đã nhận lệnh: "${command}". Đang xử lý...`);
+    // Here you would integrate actual logic to handle voice commands
+    if (command.includes('thêm công việc')) {
+      const task = command.replace('thêm công việc', '').trim();
+      setCommandResponse(`Đã thêm công việc: "${task}". (Đây là mô phỏng)`);
+      // In a real app, you'd dispatch an action to add the task
+    } else if (command.includes('lịch hôm nay')) {
+      setCommandResponse('Hôm nay bạn có cuộc họp lúc 10 giờ sáng. (Đây là mô phỏng)');
+      // In a real app, you'd fetch and summarize today's schedule
+    } else {
+      setCommandResponse('Tôi không hiểu lệnh này. Vui lòng thử lại.');
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>Ra lệnh bằng giọng nói</h2>
+      <div className="text-center mb-8">
+        {isListening ? (
+          <button
+            onClick={stopListening}
+            className="bg-red-500 text-white px-8 py-4 rounded-full shadow-lg hover:bg-red-600 transition-all duration-300 transform hover:scale-105 flex items-center justify-center mx-auto text-lg"
+          >
+            <span role="img" aria-label="stop listening" className="mr-2 text-2xl">🔴</span> Ngừng nghe
+          </button>
+        ) : (
+          <button
+            onClick={startListening}
+            className="bg-green-600 text-white px-8 py-4 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center mx-auto text-lg"
+          >
+            <span role="img" aria-label="start listening" className="mr-2 text-2xl">🎙️</span> Bắt đầu nói
+          </button>
+        )}
+        {isListening && <p className={`mt-4 font-medium animate-pulse ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>Đang nghe...</p>}
+      </div>
+
+      {recognizedText && (
+        <div className={`p-4 rounded-lg shadow-sm mb-4 ${isDarkMode ? 'bg-slate-700' : 'bg-gray-100'}`}>
+          <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Bạn đã nói:</h3>
+          <p className={`italic ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>"{recognizedText}"</p>
+        </div>
+      )}
+
+      {commandResponse && (
+        <div className={`p-4 rounded-lg shadow-sm ${isDarkMode ? 'bg-green-700' : 'bg-green-50'}`}>
+          <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-slate-100' : 'text-green-800'}`}>Phản hồi hệ thống:</h3>
+          <p className={`${isDarkMode ? 'text-slate-100' : 'text-green-700'}`}>{commandResponse}</p>
+        </div>
+      )}
+
+      <div className={`mt-8 p-6 rounded-lg shadow-sm border ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-200'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-200' : 'text-gray-700'}`}>Các lệnh mẫu:</h3>
+        <ul className={`list-disc list-inside space-y-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>
+          <li>"Thêm công việc: gọi điện cho khách hàng A"</li>
+          <li>"Lịch của tôi hôm nay có gì?"</li>
+          <li>"Sắp xếp lại lịch trình"</li>
+          <li>"Đánh dấu công việc 'viết báo cáo' là hoàn thành"</li>
+        </ul>
+        <p className={`mt-4 text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+          *Lưu ý: Chức năng nhận diện giọng nói có thể yêu cầu quyền truy cập microphone từ trình duyệt của bạn.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// NotificationsTab Component (Thông báo mới)
+function NotificationsTab({ isDarkMode }) {
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: 'task_reminder', message: 'Công việc "Hoàn thành báo cáo Q2" sắp đến hạn (ngày 15/06).', timestamp: '2025-05-31T09:00:00Z', read: false },
+    { id: 2, type: 'ai_suggestion', message: 'AI đề xuất: Nhóm các cuộc gọi điện thoại vào buổi sáng để tối ưu thời gian.', timestamp: '2025-05-31T08:30:00Z', read: false },
+    { id: 3, type: 'sync_status', message: 'Đồng bộ Google Calendar thành công.', timestamp: '2025-05-30T18:00:00Z', read: true },
+    { id: 4, type: 'system_update', message: 'Hệ thống đã được cập nhật với các tính năng mới.', timestamp: '2025-05-29T10:00:00Z', read: false },
+  ]);
+
+  // Function to mark a single notification as read
+  const markAsRead = (id) => {
+    setNotifications(notifications.map(notif =>
+      notif.id === id ? { ...notif, read: true } : notif
+    ));
+  };
+
+  // Function to mark all notifications as read
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(notif => ({ ...notif, read: true })));
+  };
+
+  // Helper function to get CSS class based on notification type
+  const getNotificationTypeClass = (type) => {
+    switch (type) {
+      case 'task_reminder': return 'bg-yellow-100 text-yellow-800'; // Keep distinct for urgency
+      case 'ai_suggestion': return 'bg-green-100 text-green-800'; // Changed to green
+      case 'sync_status': return 'bg-green-100 text-green-800'; // Changed to green
+      case 'system_update': return 'bg-purple-100 text-purple-800'; // Keep distinct
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className={`text-3xl font-bold mb-6 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>Thông báo mới</h2>
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={markAllAsRead}
+          className={`px-4 py-2 rounded-lg transition-colors ${isDarkMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+        >
+          Đánh dấu tất cả đã đọc
+        </button>
+      </div>
+      <ul className="space-y-4">
+        {notifications.length === 0 ? (
+          <p className={`text-center py-8 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>Không có thông báo mới nào.</p>
+        ) : (
+          notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((notif) => (
+            <li
+              key={notif.id}
+              className={`p-4 rounded-lg shadow-sm border ${isDarkMode ? 'border-slate-700' : 'border-gray-200'}
+                ${notif.read ? (isDarkMode ? 'bg-slate-800' : 'bg-white') : (isDarkMode ? 'bg-slate-700 border-green-700' : 'bg-green-50 border-green-200')}`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getNotificationTypeClass(notif.type)}`}>
+                  {notif.type.replace('_', ' ').toUpperCase()}
+                </span>
+                {!notif.read && (
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${isDarkMode ? 'bg-green-600 text-slate-100' : 'bg-green-200 text-green-600'}`}>MỚI</span>
+                )}
+              </div>
+              <p className={`text-base mb-2 ${isDarkMode ? 'text-slate-100' : 'text-gray-900'}`}>{notif.message}</p>
+              <div className={`flex justify-between items-center text-sm ${isDarkMode ? 'text-slate-300' : 'text-gray-500'}`}>
+                <span>{new Date(notif.timestamp).toLocaleString('vi-VN')}</span>
+                {!notif.read && (
+                  <button
+                    onClick={() => markAsRead(notif.id)}
+                    className="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-xs"
+                  >
+                    Đánh dấu đã đọc
+                  </button>
+                )}
+              </div>
+            </li>
+          ))
+        )}
+      </ul>
+      <p className={`mt-8 text-sm text-center ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+        *Để nhận thông báo đẩy (push notifications), hãy đảm bảo bạn đã cho phép ứng dụng gửi thông báo trong cài đặt trình duyệt của mình.
+      </p>
+    </div>
+  );
+}
+
+// Ensure Tailwind CSS is loaded. You would typically do this in your public/index.html or main JS file.
+// For this single immersive example, we'll include it here for completeness.
+// In a real React project, you'd configure Tailwind via postcss.config.js and tailwind.config.js
+// and import its base styles in your main CSS file.
+// <script src="https://cdn.tailwindcss.com"></script> is usually in index.html, not here.
+// But for a runnable example, we'll assume it's available or you'll add it.
+
+// This is typically in index.js or main.jsx for a React app
+// import React from 'react';
+// import ReactDOM from 'react-dom/client';
+// import App from './App';
+// import './index.css'; // Your global CSS, including Tailwind directives
+
+// const root = ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
+
+// To make this runnable in a single immersive, we'll export App as default
+export default App;
